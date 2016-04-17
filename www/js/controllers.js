@@ -1,90 +1,122 @@
 angular.module('starter.controllers', [])
 
-.directive('map', ['$timeout', '$window', '$http', function($timeout, $window, $http) {
-  return {
-    restrict: "E",
-    scope: {
-      
-    },
-    link: function ($scope, $elem, $attrs) {
-
-      $scope.enableHighAccuracy = true;
-
-      document.addEventListener(
-        'deviceready',
-        function onDeviceReady () {
-
-          var startWatching = function () {
-            var watchLocation = navigator.geolocation.watchPosition(
-              function(position) {
-                $scope.locationMarker.setLatLng([position.coords.latitude, position.coords.longitude]).addTo($scope.map);
-              },
-              function(error){
-                  console.log(error.code);
-                  console.log(error.message);
-                  navigator.geolocation.clearWatch(watchLocation);
-                  startWatching();
-              },
-              {
-                  enableHighAccuracy: $scope.enableHighAccuracy,
-                  maximumAge: 2000,
-                  timeout: 10000
-              }
-            );
-          };
-          startWatching();
-        },
-        false
-      );
-
-
-
-      var uid = '' + new Date().getUTCMilliseconds();
-      var mapelem = angular.element('<div id="#' + uid + '"></div>');
-      $scope.map = new L.map($elem[0],
-          {
-              closePopupOnClick: false,
-              attributionControl: false,
-              zoomControl:false,
-              contextmenu: true,
-              contextmenuItems: [
-                  {
-                      text: 'Marcar Origen',
-                      callback: $scope.marcarOrigen
-                  }, {
-                      text: 'Marcar Destino',
-                      callback: $scope.marcarDestino
-                  },
-                  '-',
-                  {
-                      text: 'Marcar Favorito',
-                      callback: $scope.nuevoFavorito
-                  },
-                  '-',
-                  {
-                      text: 'Cerrar'
-                  }
-              ]
-          }
-      );
-      $scope.markerA = L.editableCircleMarker(null, $scope.radio, {draggable: true, className: 'markerA'})
-      $scope.markerB = L.editableCircleMarker(null, $scope.radio, {draggable: true, className: 'markerB'})
-      $scope.map.addControl( L.control.zoom({position: 'bottomright'}) );
-      
-      $scope.map.setView([-34.92137284339113, -57.95438289642334], 12);
-      
-      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; Cualbondi & OpenStreetMap contributors',
-          unloadInvisibleTiles: false,
-          updateWhenIdle: false
-      }).addTo($scope.map);
-      $scope.locationMarker = L.marker(null, {icon: L.divIcon({className: 'location-marker'})});
-    }
-  }
-}])
-
-
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+  $scope.API_EXTRA_PARAMS = {callback: "JSON_CALLBACK"};
+  if ( typeof device !== 'undefined' ) {
+    $scope.API_EXTRA_PARAMS.uuid = device.uuid;
+    $scope.API_EXTRA_PARAMS.source = device.platform;
+    $scope.device_uuid = device.platform + device.uuid;
+  }
+  $scope.API_ENDPOINT = "http://cualbondi.com.ar/api/";
+
+  function getFromLocalStorage(name) {
+    var ret = window.localStorage.getItem(name);
+    if ( ret === null )
+      return null;
+    else
+      return JSON.parse(ret);
+  }
+  $scope.ciudades = getFromLocalStorage("ciudades");
+  $scope.ciudad = getFromLocalStorage("ciudad");
+
+  $scope.radio = 200;
+  $scope.resultadoIndice = 0;
+  $scope.resultados = [];
+
+  $scope.enableHighAccuracy = true;
+
+  document.addEventListener(
+    'deviceready',
+    function onDeviceReady () {
+
+      var startWatching = function () {
+        var watchLocation = navigator.geolocation.watchPosition(
+          function(position) {
+            $scope.locationMarker.setLatLng([position.coords.latitude, position.coords.longitude]).addTo($scope.map);
+          },
+          function(error){
+            console.log(error.code);
+            console.log(error.message);
+            navigator.geolocation.clearWatch(watchLocation);
+            startWatching();
+          },
+          {
+            enableHighAccuracy: $scope.enableHighAccuracy,
+            maximumAge: 2000,
+            timeout: 10000
+          }
+        );
+      };
+      startWatching();
+    },
+    false
+  );
+
+
+  $scope.map = new L.map('mapa',
+    {
+      closePopupOnClick: false,
+      attributionControl: false,
+      zoomControl:false,
+      contextmenu: true,
+      contextmenuItems: [
+        {
+          text: 'Marcar Origen',
+          callback: $scope.marcarOrigen
+        }, {
+          text: 'Marcar Destino',
+          callback: $scope.marcarDestino
+        },
+        '-',
+        {
+          text: 'Marcar Favorito',
+          callback: $scope.nuevoFavorito
+        },
+        '-',
+        {
+          text: 'Cerrar'
+        }
+    ]
+    }
+  );
+  $scope.markerA = L.editableCircleMarker(null, $scope.radio, {draggable: true, className: 'markerA'})
+  $scope.markerB = L.editableCircleMarker(null, $scope.radio, {draggable: true, className: 'markerB'})
+  $scope.map.addControl( L.control.zoom({position: 'bottomright'}) );
+  
+  $scope.map.setView([-34.92137284339113, -57.95438289642334], 12);
+  
+  L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; Cualbondi & OpenStreetMap contributors',
+    unloadInvisibleTiles: false,
+    updateWhenIdle: false
+  }).addTo($scope.map);
+  $scope.locationMarker = L.marker(null, {icon: L.divIcon({className: 'location-marker'})});
+
+  $scope.marcarOrigen  = function(e) { $scope.marcarOD(e, true); };
+  $scope.marcarDestino = function(e) { $scope.marcarOD(e, false); };
+  $scope.marcarOD = function(e, origen) {
+    var marker = origen ? $scope.markerA : $scope.markerB;
+    if ( e.latlng ) {
+      marker.setLatLng(e.latlng).addTo($scope.map);
+      if ( e.text )
+        marker.bindPopup(e.text);
+      else
+        if ( marker.getPopup() )
+          marker.unbindPopup();
+    }
+    else {
+      $scope.map.removeLayer(marker);
+      marker._latlng = null;
+    }
+    $scope.buscarRecorridos();
+  };
+
+
+
+
+
+
+
 
   // Form data for the login modal
   $scope.loginData = {};

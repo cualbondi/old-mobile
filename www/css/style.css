@@ -20,7 +20,7 @@ body {
   border-top: 1px solid #ddd !important;
 }
 
-map {
+#mapa {
   height: 100%;
   display:block;
 }
