@@ -65,7 +65,7 @@ L.EditableCircleMarker = L.Class.extend({
     },
     
     getPopup: function() {
-        return this._marker.getPopup()
+        return this._marker.getPopup();
     },
  
     onRemove: function (map) {
