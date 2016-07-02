@@ -1,7 +1,7 @@
 {
-  "name": "cualbondi3",
-  "version": "1.1.1",
-  "description": "cualbondi3: An Ionic project",
+  "name": "cualbondi",
+  "version": "3.0.0",
+  "description": "cualbondi v3",
   "dependencies": {
     "gulp": "^3.5.6",
     "gulp-sass": "^2.0.4",

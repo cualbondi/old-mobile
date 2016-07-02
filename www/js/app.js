@@ -1,7 +1,55 @@
-angular.module('starter', ['ionic'])
+angular.module('app', ['ionic', 'ngCordova'])
 
-.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
+angular.module('app').factory('geoLocationService', function($cordovaGeolocation, $rootScope, $timeout) {
+  return {
+    onPosition: function(scope, callback) {
+      // callback receives (event, position) arguments
+      var handler = $rootScope.$on('geoLocationService:position', callback);
+      scope.$on('$destroy', handler);
+    },
+    onError: function(scope, callback) {
+      // callback receives (event, error) arguments
+      var handler = $rootScope.$on('geoLocationService:error', callback);
+      scope.$on('$destroy', handler);
+    },
+    init: function(scope, options) {
+      options = angular.merge(options || {}, {
+        enableHighAccuracy: true,
+        maximumAge: 2000,
+        timeout: 10000,
+        retry: 2000
+      })
+      var self = this;
+
+      self.startWatching = function () {
+        var watch = $cordovaGeolocation.watchPosition(options);
+        watch.then(
+          null, // success/resolve is never called
+          function(error) {
+            $rootScope.$emit('geoLocationService:error', error);
+            watch.cancel();
+            if (options.retry && options.retry > 0) {
+              // failed, try again in two seconds
+              $timeout(self.startWatching, options.retry);
+            }
+          },
+          function(position) {
+            $rootScope.$emit('geoLocationService:position', position);
+          }
+        );
+
+      };
+      self.startWatching();
+    }
+  }
+});
+
+
+angular.module('app').run(init)
+
+function init($ionicPlatform, geoLocationService) {
+  $ionicPlatform.ready(function(readySource) {
+    //console.log('Platform ready from', readySource);
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard for form inputs)
     if (window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -25,12 +73,23 @@ angular.module('starter', ['ionic'])
     else {
       console.log( 'admob plugin not available' );
     }
+
+
+    geoLocationService.init();
+
   });
-})
+}
 
 
 
-.controller('AppCtrl', ['$scope', '$http', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', function($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate) {
+angular.module('app').controller('AppCtrl', AppCtrl);
+
+AppCtrl.$inject = ['$scope', '$http', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', 'geoLocationService']
+
+function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, geoLocationService) {
+
+  $scope.API_EXTRA_PARAMS = {};
+  $scope.API_ENDPOINT = '';
 
   $scope.API_EXTRA_PARAMS = {callback: 'JSON_CALLBACK'};
   if ( typeof device !== 'undefined' ) {
@@ -40,13 +99,6 @@ angular.module('starter', ['ionic'])
   }
   $scope.API_ENDPOINT = 'https://cualbondi.com.ar/api/';
 
-  function getFromLocalStorage(name) {
-    var ret = window.localStorage.getItem(name);
-    if ( ret === null )
-      return null;
-    else
-      return JSON.parse(ret);
-  }
   $scope.ciudades = getFromLocalStorage('ciudades');
   $scope.ciudad = getFromLocalStorage('ciudad');
 
@@ -56,33 +108,13 @@ angular.module('starter', ['ionic'])
 
   $scope.enableHighAccuracy = true;
 
-  document.addEventListener(
-    'deviceready',
-    function onDeviceReady () {
+  geoLocationService.onPosition($scope, function(event, position) {
+    $scope.locationMarker.setLatLng([position.coords.latitude, position.coords.longitude]).addTo($scope.map);
+  })
+  geoLocationService.onError($scope, function(event, error) {
+    console.log(error)
+  })
 
-      var startWatching = function () {
-        var watchLocation = navigator.geolocation.watchPosition(
-          function(position) {
-            $scope.locationMarker.setLatLng([position.coords.latitude, position.coords.longitude]).addTo($scope.map);
-          },
-          function(error){
-            console.log(error.code);
-            console.log(error.message);
-            // failed, try again in two seconds
-            $timeout(startWatching, 2000);
-            navigator.geolocation.clearWatch(watchLocation);
-          },
-          {
-            enableHighAccuracy: $scope.enableHighAccuracy,
-            maximumAge: 2000,
-            timeout: 10000
-          }
-        );
-      };
-      startWatching();
-    },
-    false
-  );
 
 
   $scope.marcarOD = function(e, origen) {
@@ -146,7 +178,7 @@ angular.module('starter', ['ionic'])
     unloadInvisibleTiles: false,
     updateWhenIdle: false
   }).addTo($scope.map);
-  $scope.locationMarker = L.marker(null, {icon: L.divIcon({className: 'location-marker'})});
+  $scope.locationMarker = L.circle(null, 100, {icon: L.divIcon({className: 'location-marker'})});
 
   $scope.map.on('click', function(e) {
       $scope.map.contextmenu.showAt(e.latlng);
@@ -252,4 +284,15 @@ angular.module('starter', ['ionic'])
     }, 1000);
   };
   
-}]);
+
+
+  // TODO: utils, refactor into service?
+  function getFromLocalStorage(name) {
+    var ret = window.localStorage.getItem(name);
+    if ( ret === null )
+      return null;
+    else
+      return JSON.parse(ret);
+  }
+
+}
