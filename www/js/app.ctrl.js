@@ -25,7 +25,8 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     // TODO 2: If error is because no permission from device, show message
     // with button to enable geolocation, (maybe do this inside service?)
 
-    console.log(error)
+    console.log(error.code)
+    console.log(error.message)
   })
 
 
