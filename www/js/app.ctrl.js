@@ -1,11 +1,11 @@
 angular.module('app').controller('AppCtrl', AppCtrl);
 
-AppCtrl.$inject = ['$scope', '$http', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos']
+AppCtrl.$inject = ['$scope', '$http', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage']
 
-function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos) {
+function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage) {
 
-  $scope.ciudades = getFromLocalStorage('ciudades');
-  $scope.ciudad = getFromLocalStorage('ciudad');
+  $scope.ciudades = localstorage.get('ciudades');
+  $scope.ciudad = localstorage.get('ciudad');
 
   $scope.radio = 200;
   $scope.resultadoIndice = 0;
@@ -179,16 +179,5 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
       $scope.closeLogin();
     }, 1000);
   };
-  
-
-
-  // TODO: utils, refactor into service?
-  function getFromLocalStorage(name) {
-    var ret = window.localStorage.getItem(name);
-    if ( ret === null )
-      return null;
-    else
-      return JSON.parse(ret);
-  }
 
 }
