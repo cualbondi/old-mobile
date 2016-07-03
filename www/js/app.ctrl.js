@@ -14,7 +14,9 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   $scope.enableHighAccuracy = true;
 
   geolocationService.onPosition($scope, function(event, position) {
-    $scope.locationMarker.setLatLng([position.coords.latitude, position.coords.longitude]).addTo($scope.map);
+    $scope.locationMarker.setLatLng([position.coords.latitude, position.coords.longitude]);
+    $scope.locationMarker.setRadius(position.coords.accuracy);
+    $scope.locationMarker.addTo($scope.map);
   })
   geolocationService.onError($scope, function(event, error) {
     // TODO 1: show and maintain error message on screen
@@ -89,7 +91,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     unloadInvisibleTiles: false,
     updateWhenIdle: false
   }).addTo($scope.map);
-  $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 100, className: 'location-marker'});
+  $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 0, className: 'location-marker'});
 
   $scope.map.on('click', function(e) {
       $scope.map.contextmenu.showAt(e.latlng);
