@@ -25,6 +25,13 @@ body {
   display:block;
 }
 
+@keyframes fadeIn { 
+  0% { opacity: 1; } 
+  50% { opacity: 1; } 
+  75% { opacity: 1; } 
+  100% { opacity: 0.5; } 
+}
+
 div.location-marker {
     border: 1px solid #428bca;
     background-color: #5bc0de;
@@ -34,6 +41,7 @@ div.location-marker {
     margin: -8px 0 0 -8px !important;
     box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
     -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+    animation: fadeIn 0.5s infinite alternate;
 }
 
 .menu-open ion-side-menu-content {

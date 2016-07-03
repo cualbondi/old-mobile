@@ -5,7 +5,7 @@
  * 
  * */
 
-L.EditableCircleMarker = L.Class.extend({
+L.MarkerWithCircle = L.Class.extend({
     includes: L.Mixin.Events,
  
     options: {
@@ -14,11 +14,10 @@ L.EditableCircleMarker = L.Class.extend({
         draggable: true
     },
  
-    initialize: function (latlng, radius, options) {
+    initialize: function (latlng, options) {
         options = options || {};
         L.Util.setOptions(this, options);
         this._latlng = L.latLng(latlng);
-        this._radius = radius;
         this._markerIcon = new L.DivIcon({
             className: this.options.className
         }),
@@ -32,7 +31,7 @@ L.EditableCircleMarker = L.Class.extend({
             this._marker.bindPopup(this.options.popup);
         }
  
-        this._circle = new L.Circle(latlng, radius, this.options);
+        this._circle = new L.Circle(latlng, this.options);
  
         // move circle when marker is dragged
         var self = this;
@@ -53,14 +52,16 @@ L.EditableCircleMarker = L.Class.extend({
  
     onAdd: function (map) {
         this._map = map;
-        this._marker.onAdd(map);
-        this._circle.onAdd(map);
+        //this._marker.onAdd(map);
+        //this._circle.onAdd(map);
         if ( this.options.draggable )
             this._marker.dragging.enable();
         this.fire('loaded');
     },
     
     addTo: function (map) {
+        this._marker.addTo(map);
+        this._circle.addTo(map);
         return this.onAdd(map);
     },
     
@@ -96,12 +97,11 @@ L.EditableCircleMarker = L.Class.extend({
     },
  
     getRadius: function () {
-        return this._radius;
+        return this._circle.getRadius();
     },
  
     setRadius: function (meters) {
         //this._marker.fire('movestart');
-        this._radius = meters;
         this._circle.setRadius(meters);
         //this._marker.fire('moveend');
     },
@@ -116,6 +116,6 @@ L.EditableCircleMarker = L.Class.extend({
  
 });
  
-L.editableCircleMarker = function (latlng, radius, options) {
-    return new L.EditableCircleMarker(latlng, radius, options);
+L.markerWithCircle = function (latlng, options) {
+    return new L.MarkerWithCircle(latlng, options);
 };

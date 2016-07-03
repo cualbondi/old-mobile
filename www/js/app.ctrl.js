@@ -21,7 +21,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     // OR alternatively remove marker
 
     // TODO 2: If error is because no permission from device, show message
-    // with button to enable geolocation
+    // with button to enable geolocation, (maybe do this inside service?)
 
     console.log(error)
   })
@@ -33,10 +33,10 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     if ( e.latlng ) {
       marker.setLatLng(e.latlng).addTo($scope.map);
       if ( e.text )
-      marker.bindPopup(e.text);
+        marker.bindPopup(e.text);
       else
-      if ( marker.getPopup() )
-      marker.unbindPopup();
+        if ( marker.getPopup() )
+          marker.unbindPopup();
     }
     else {
       $scope.map.removeLayer(marker);
@@ -89,7 +89,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     unloadInvisibleTiles: false,
     updateWhenIdle: false
   }).addTo($scope.map);
-  $scope.locationMarker = L.circle(null, 100, {icon: L.divIcon({className: 'location-marker'})});
+  $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 100, className: 'location-marker'});
 
   $scope.map.on('click', function(e) {
       $scope.map.contextmenu.showAt(e.latlng);
