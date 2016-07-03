@@ -6,6 +6,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
 
   $scope.ciudades = localstorage.get('ciudades');
   $scope.ciudad = localstorage.get('ciudad');
+  $scope.ciudad = {'slug':'la-plata',      'nombre':'La Plata'     , 'latlng':[-34.92137284339113, -57.95438289642334]}
 
   $scope.radio = 200;
   $scope.resultadoIndice = 0;
@@ -31,8 +32,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
 
 
 
-  $scope.marcarOD = function(e, origen) {
-    var marker = origen ? $scope.markerA : $scope.markerB;
+  $scope.marcar = function(e, marker) {
     if ( e.latlng ) {
       marker.setLatLng(e.latlng).addTo($scope.map);
       if ( e.text )
@@ -43,12 +43,10 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     }
     else {
       $scope.map.removeLayer(marker);
-      marker._latlng = null;
+      marker.setLatLng = null;
     }
     $scope.buscarRecorridos();
   };
-  $scope.marcarOrigen  = function(e) { $scope.marcarOD(e, true); };
-  $scope.marcarDestino = function(e) { $scope.marcarOD(e, false); };
 
 
   $scope.map = new L.map('mapa',
@@ -60,10 +58,10 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
       contextmenuItems: [
         {
           text: 'Marcar Origen',
-          callback: $scope.marcarOrigen
+          callback: function(e) { $scope.marcar(e, $scope.markerA); }
         }, {
           text: 'Marcar Destino',
-          callback: $scope.marcarDestino
+          callback: function(e) { $scope.marcar(e, $scope.markerB); }
         },
         '-',
         {
@@ -77,15 +75,16 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     ]
     }
   );
-  $scope.markerA = L.circle(null, $scope.radio, {draggable: true, className: 'markerA'});
-  $scope.markerB = L.circle(null, $scope.radio, {draggable: true, className: 'markerB'});
-  //$scope.markerA = L.editableCircleMarker(null, $scope.radio, {draggable: true, className: 'markerA'});
-  //$scope.markerB = L.editableCircleMarker(null, $scope.radio, {draggable: true, className: 'markerB'});
+  $scope.markerA = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, className: 'markerA'});
+  $scope.markerB = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, className: 'markerB'});
+  $scope.markerA.on('moveend', function(e) {$scope.buscarRecorridos()});
+  $scope.markerB.on('moveend', function(e) {$scope.buscarRecorridos()});
+
   $scope.map.addControl( L.control.zoom({position: 'bottomright'}) );
   $scope.resultadosLayer = L.featureGroup();
   $scope.map.addLayer($scope.resultadosLayer);
 
-  $scope.map.setView([-34.92137284339113, -57.95438289642334], 12);
+  $scope.map.setView($scope.ciudad.latlng, 12);
   
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; Cualbondi & OpenStreetMap contributors',
@@ -104,8 +103,6 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   }, true);
 
 
-  $scope.ciudad = {'slug':'la-plata',      'nombre':'La Plata'     , 'latlng':[-34.92137284339113, -57.95438289642334]}
-
   $scope.buscarRecorridos = function buscarRecorridos(p) {
       var more = true;
       if ( typeof p === 'undefined' || typeof p === 'object') {
@@ -114,11 +111,11 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
           more = false;
           p = 1;
       }
-      if ( $scope.markerA._latlng !== null && $scope.markerB._latlng !== null ) {
+      if ( $scope.markerA.getLatLng() !== null && $scope.markerB.getLatLng() !== null ) {
           $scope.status = 'buscando lineas';
           Recorridos.search({
-              origen: $scope.markerA._latlng,
-              destino: $scope.markerB._latlng,
+              origen: $scope.markerA.getLatLng(),
+              destino: $scope.markerB.getLatLng(),
           }).success(function(data) {
             if ( more ) {
                 $scope.resultados = $scope.resultados.concat(data.resultados);

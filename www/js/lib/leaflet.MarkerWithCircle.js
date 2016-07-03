@@ -35,18 +35,17 @@ L.MarkerWithCircle = L.Class.extend({
  
         // move circle when marker is dragged
         var self = this;
-        this._marker.on('movestart', function() {
-            self.fire('movestart');
+        this._marker.on('movestart', function(e) {
+            self.fire('movestart', e);
         });
-        this._marker.on('move', function(latlng) {
-            var oldLatLng = self._latlng;
-            self._latlng = this._latlng;
-            self._circle.setLatLng(self._latlng);
-            return self.fire('move', { oldLatLng: oldLatLng, latlng: self._latlng });
+        this._marker.on('move', function(e) {
+            self._latlng = e.target._latlng;
+            self._circle.setLatLng(e.target._latlng);
+            return self.fire('move', e);
         });
-        this._marker.on('moveend', function() {
-            self._marker.setLatLng(this._latlng);
-            self.fire('moveend');
+        this._marker.on('moveend', function(e) {
+            self._latlng = e.target._latlng;
+            self.fire('moveend', e);
         });
     },
  
@@ -88,11 +87,11 @@ L.MarkerWithCircle = L.Class.extend({
     },
  
     setLatLng: function (latlng) {
-        this._marker.fire('movestart');
+        //this._marker.fire('movestart');
         this._latlng = L.latLng(latlng);
         this._marker.setLatLng(this._latlng);
         this._circle.setLatLng(this._latlng);
-        this._marker.fire('moveend');
+        //this._marker.fire('moveend');
         return this;
     },
  

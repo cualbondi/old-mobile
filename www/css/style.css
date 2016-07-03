@@ -25,28 +25,73 @@ body {
   display:block;
 }
 
-@keyframes fadeIn { 
-  0% { opacity: 1; } 
-  50% { opacity: 1; } 
-  75% { opacity: 1; } 
-  100% { opacity: 0.5; } 
-}
-
-div.location-marker {
-    border: 1px solid #428bca;
-    background-color: #5bc0de;
-    height: 16px !important;
-    width: 16px !important;
-    border-radius: 8px;
-    margin: -8px 0 0 -8px !important;
-    box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
-    -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
-    animation: fadeIn 0.5s infinite alternate;
-}
-
 .menu-open ion-side-menu-content {
   opacity: 0.8;
 }
 .menu-open ion-side-menus {
   background: black;
+}
+
+
+/* leaflet markers */
+
+div.leaflet-marker-icon {
+    margin-left: -10px !important;
+    margin-top: -50px !important;
+    width: 20px !important;
+    height: 50px !important;
+}
+
+.leaflet-marker-icon {
+  -webkit-transition: height .4s ease;
+     -moz-transition: height .4s ease;
+       -o-transition: height .4s ease;
+          transition: height .4s ease;
+  -webkit-transition: margin .4s ease;
+     -moz-transition: margin .4s ease;
+       -o-transition: margin .4s ease;
+          transition: margin .4s ease;
+}
+
+div.leaflet-marker-icon.leaflet-drag-target {
+    margin-left: -10px !important;
+    margin-top: -45px !important;
+    width: 20px !important;
+    height: 50px !important;
+}
+
+div.leaflet-marker-icon.markerA {
+    background: url(../img/markerA.png);
+}
+
+.markerA.leaflet-drag-target {
+    background: url(../img/markerA-drag.png) !important;
+}
+
+div.leaflet-marker-icon.markerB {
+    background: url(../img/markerB.png);
+}
+
+div.leaflet-marker-icon.markerB.leaflet-drag-target {
+    background: url(../img/markerB-drag.png);
+}
+
+
+div.location-marker {
+  border: 1px solid #428bca;
+  background-color: #5bc0de;
+  height: 16px !important;
+  width: 16px !important;
+  border-radius: 8px;
+  margin: -8px 0 0 -8px !important;
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+  -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+  animation: fadeIn 0.5s infinite alternate;
+}
+
+@keyframes fadeIn { 
+  0% { opacity: 1; } 
+  50% { opacity: 1; } 
+  75% { opacity: 1; } 
+  100% { opacity: 0.5; } 
 }
