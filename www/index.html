@@ -57,9 +57,28 @@
             </div>
           </ion-header-bar>
           
-          <ion-pane>
+          <ion-content>
             <div data-tap-disabled="true" id="mapa"></div>
-          </ion-pane>
+          </ion-content>
+
+          
+          <ion-footer-bar class="bar-light" ng-show="busqueda">
+            <div ng-hide="status">
+              <div class="buttons">
+                <button ng-show="resultadoIndice>0" class="button button-icon icon ion-chevron-left" ng-click="setResultadoIndice(resultadoIndice-1)"></button>
+              </div>
+              <h1 class="title">
+                <span ng-show="cantidadResultados > 0">{{resultados[resultadoIndice].itinerario[0].nombre}}</span>
+                <span ng-show="cantidadResultados == 0">No se encontraron resultados</span>
+              </h1>
+              <div class="buttons">
+                <button ng-show="resultadoIndice < cantidadResultados - 1" class="button button-icon icon ion-chevron-right" ng-click="setResultadoIndice(resultadoIndice+1)"></button>
+              </div>
+            </div>
+            <div ng-show="status">
+              <h1 class="title"><ion-spinner></ion-spinner></h1>
+            </div>
+          </ion-footer-bar>
 
         </ion-side-menu-content>
 

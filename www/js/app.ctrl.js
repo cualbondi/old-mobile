@@ -122,7 +122,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   }}, true);
 
 
-  $scope.buscarRecorridos = function buscarRecorridos(p) {
+  $scope.buscarRecorridos = function buscarRecorridos(p, next) {
       var more = true;
       if ( typeof p === 'undefined' || typeof p === 'object') {
           $scope.resultadoIndice = 0;
@@ -130,11 +130,13 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
           more = false;
           p = 1;
       }
+      $scope.busqueda=true;
       if ( $scope.markerA.getLatLng() !== null && $scope.markerB.getLatLng() !== null ) {
           $scope.status = 'buscando lineas';
           Recorridos.search({
               origen: $scope.markerA.getLatLng(),
               destino: $scope.markerB.getLatLng(),
+              p: p
           }).success(function(data) {
             $scope.status = '';
             if ( more ) {
@@ -142,6 +144,8 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
             }
             else
                 $scope.resultados = data.resultados;
+            $scope.cantidadResultados = data.cant;
+            if (next) next();
           })
 
       }
@@ -175,6 +179,20 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     $scope.init();
   }
 
+  $scope.setResultadoIndice = function (indice) {
+    var end = function() {
+      $scope.loadingResultados = false;
+      $scope.resultadoIndice = indice;
+      actualizar_vista_resultados($scope.resultados, indice);
+    };
+    $scope.loadingResultados = true;
+    if (indice >= $scope.resultados.length) {
+      $scope.buscarRecorridos(parseInt(indice/5)+1, end);
+    }
+    else {
+      end();
+    }
+  }
 
 
 
