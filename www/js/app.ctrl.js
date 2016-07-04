@@ -166,7 +166,6 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   }
 
   $scope.setCiudad = function (ciudadSlug) {
-    console.log(ciudadSlug)
     for (var i = 0; i<$scope.ciudades.length; i++) {
       if ($scope.ciudades[i].slug == ciudadSlug)
         $scope.ciudad = $scope.ciudades[i];
