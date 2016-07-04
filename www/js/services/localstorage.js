@@ -7,8 +7,8 @@ angular.module('app').factory('localstorage', function($window) {
       else
         return JSON.parse(ret);
     },
-    set: function(key) {
-      
+    set: function(key, value) {
+      $window.localStorage.setItem(key, JSON.stringify(angular.copy(value)));
     }
   }
 });

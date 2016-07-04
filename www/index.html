@@ -53,9 +53,9 @@
             <div class="buttons">
               <button menu-toggle="left" class="button button-icon icon ion-navicon"></button>
             </div>
-            <h1 class="title">Title!</h1>
+            <h1 class="title" ng-click="modal_ciudades.show()">{{ciudad.nombre}}</h1>
             <div class="buttons">
-              <button class="button">Right Button</button>
+              <ion-spinner ng-show="status"></ion-spinner>
             </div>
           </ion-header-bar>
           
@@ -71,17 +71,17 @@
           </ion-header-bar>
           <ion-content>
             <ion-list>
-              <ion-item menu-close ng-click="login()">
+              <ion-item menu-close ng-click="openmodal_login()">
                 Login
               </ion-item>
-              <ion-item menu-close href="#/app/search">
-                Search
+              <ion-item menu-close ng-click="openmodal_favs()">
+                Favoritos
               </ion-item>
-              <ion-item menu-close href="#/app/browse">
-                Browse
+              <ion-item menu-close ng-click="modal_ciudades.show()">
+                Ciudad
               </ion-item>
-              <ion-item menu-close href="#/app/playlists">
-                Playlists
+              <ion-item menu-close ng-click="">
+                Lineas
               </ion-item>
             </ion-list>
           </ion-content>

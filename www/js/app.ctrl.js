@@ -5,8 +5,22 @@ AppCtrl.$inject = ['$scope', '$http', '$ionicModal', '$timeout', '$ionicSideMenu
 function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage) {
 
   $scope.ciudades = localstorage.get('ciudades');
+  if ( !$scope.ciudades ) {
+    $scope.ciudades = [
+      {slug:"bahia-blanca",  nombre:"Bahía Blanca" , latlng:[-38.71712603942564, -62.26758956909179]},
+      {slug:"buenos-aires",  nombre:"Buenos Aires" , latlng:[-34.61060576091466, -58.38821411132812]},
+      {slug:"cordoba",       nombre:"Córdoba"      , latlng:[-31.41672448645413, -64.18350219726561]},
+      {slug:"la-plata",      nombre:"La Plata"     , latlng:[-34.92137284339113, -57.95438289642334]},
+      {slug:"mar-del-plata", nombre:"Mar del Plata", latlng:[-38.00353496501491, -57.55290985107422]},
+      {slug:"mendoza",       nombre:"Mendoza"      , latlng:[-32.88960597084806, -68.84445190429688]},
+      {slug:"rosario",       nombre:"Rosario"      , latlng:[-32.94350062291001, -60.64985275268555]},
+      {slug:"salta",         nombre:"Salta"        , latlng:[-24.78924754938909, -65.41031241416931]},
+      {slug:"santa-fe",      nombre:"Santa Fé"     , latlng:[-31.64189163095992, -60.70441961288452]}
+    ];
+    localstorage.set("ciudades", $scope.ciudades);
+  }
+
   $scope.ciudad = localstorage.get('ciudad');
-  $scope.ciudad = {'slug':'la-plata',      'nombre':'La Plata'     , 'latlng':[-34.92137284339113, -57.95438289642334]}
 
   $scope.radio = 200;
   $scope.resultadoIndice = 0;
@@ -17,7 +31,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   geolocationService.onPosition($scope, function(event, position) {
     $scope.locationMarker.setLatLng([position.coords.latitude, position.coords.longitude]);
     $scope.locationMarker.setRadius(position.coords.accuracy);
-    $scope.locationMarker.addTo($scope.map);
+    if ($scope.map) $scope.locationMarker.addTo($scope.map);
   })
   geolocationService.onError($scope, function(event, error) {
     // TODO 1: show and maintain error message on screen
@@ -49,58 +63,63 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   };
 
 
-  $scope.map = new L.map('mapa',
-    {
-      closePopupOnClick: false,
-      attributionControl: false,
-      zoomControl:false,
-      contextmenu: true,
-      contextmenuItems: [
-        {
-          text: 'Marcar Origen',
-          callback: function(e) { $scope.marcar(e, $scope.markerA); }
-        }, {
-          text: 'Marcar Destino',
-          callback: function(e) { $scope.marcar(e, $scope.markerB); }
-        },
-        '-',
-        {
-          text: 'Marcar Favorito',
-          callback: $scope.nuevoFavorito
-        },
-        '-',
-        {
-          text: 'Cerrar'
-        }
-    ]
-    }
-  );
+  $scope.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; Cualbondi & OpenStreetMap contributors',
+    unloadInvisibleTiles: false,
+    updateWhenIdle: false
+  })
+
+
+  $scope.resultadosLayer = L.featureGroup();
+  $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 0, className: 'location-marker'});
   $scope.markerA = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, className: 'markerA'});
   $scope.markerB = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, className: 'markerB'});
   $scope.markerA.on('moveend', function(e) {$scope.buscarRecorridos()});
   $scope.markerB.on('moveend', function(e) {$scope.buscarRecorridos()});
 
-  $scope.map.addControl( L.control.zoom({position: 'bottomright'}) );
-  $scope.resultadosLayer = L.featureGroup();
-  $scope.map.addLayer($scope.resultadosLayer);
-
-  $scope.map.setView($scope.ciudad.latlng, 12);
-  
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; Cualbondi & OpenStreetMap contributors',
-    unloadInvisibleTiles: false,
-    updateWhenIdle: false
-  }).addTo($scope.map);
-  $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 0, className: 'location-marker'});
-
-  $scope.map.on('click', function(e) {
-      $scope.map.contextmenu.showAt(e.latlng);
-  });
+  $scope.init = function() {
+    if (!$scope.map) {
+      $scope.map = new L.map('mapa',
+        {
+          closePopupOnClick: false,
+          attributionControl: false,
+          zoomControl:false,
+          contextmenu: true,
+          contextmenuItems: [
+            {
+              text: 'Marcar Origen',
+              callback: function(e) { $scope.marcar(e, $scope.markerA); }
+            }, {
+              text: 'Marcar Destino',
+              callback: function(e) { $scope.marcar(e, $scope.markerB); }
+            },
+            '-',
+            {
+              text: 'Marcar Favorito',
+              callback: $scope.nuevoFavorito
+            },
+            '-',
+            {
+              text: 'Cerrar'
+            }
+        ]
+        }
+      );
+      $scope.map.addControl( L.control.zoom({position: 'bottomright'}) );
+      $scope.map.addLayer($scope.resultadosLayer);
+      $scope.tileLayer.addTo($scope.map);
+      if ($scope.locationMarker.getLatLng()) $scope.locationMarker.addTo($scope.map);
+      $scope.map.on('click', function(e) {
+        $scope.map.contextmenu.showAt(e.latlng);
+      });
+    }
+    $scope.map.setView($scope.ciudad.latlng, 12);
+  }
 
   // mostrar resultados en todos lados
-  $scope.$watchCollection('resultados', function(newValue, oldValue) {
-      actualizar_vista_resultados(newValue, $scope.resultadoIndice);
-  }, true);
+  $scope.$watchCollection('resultados', function(n, o) {if(n!=o){
+    actualizar_vista_resultados(newValue, $scope.resultadoIndice);
+  }}, true);
 
 
   $scope.buscarRecorridos = function buscarRecorridos(p) {
@@ -146,6 +165,16 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
       }
   }
 
+  $scope.setCiudad = function (ciudadSlug) {
+    console.log(ciudadSlug)
+    for (var i = 0; i<$scope.ciudades.length; i++) {
+      if ($scope.ciudades[i].slug == ciudadSlug)
+        $scope.ciudad = $scope.ciudades[i];
+    }
+    localstorage.set('ciudad', $scope.ciudad);
+    $scope.init();
+  }
+
 
 
 
@@ -179,5 +208,14 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
       $scope.closeLogin();
     }, 1000);
   };
+
+  $ionicModal.fromTemplateUrl('modal-ciudades.html', {scope: $scope}).then(function(modal) {
+    $scope.modal_ciudades = modal;
+    if ($scope.ciudad) $scope.init()
+    else modal.show();
+  });
+  $ionicModal.fromTemplateUrl('modal-login.html'   , {scope: $scope}).then(function(modal) {
+    $scope.modal_login    = modal;
+  });
 
 }

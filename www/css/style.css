@@ -4,6 +4,12 @@ body {
   min-height: 100%;
 }
 
+
+.bar-stable h1.title {
+  cursor: pointer;
+}
+
+
 .scroll, .angular-leaflet-map {
   height: 100%;
 }

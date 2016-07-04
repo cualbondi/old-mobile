@@ -1,0 +1,22 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+    <h1 class="title">Seleccionar ciudad</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="modal_ciudades.hide()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <ion-list>
+      <ion-radio ng-repeat="c in ciudades" ng-model="$parent.$parent.$parent.$parent.ciudadSlug" ng-value="c.slug">{{c.nombre}}</ion-radio>
+    </ion-list>
+  </ion-content>
+  <ion-footer-bar>
+    <div class="buttons">
+    </div>
+    <h1 class="title"></h1>
+    <div class="buttons">
+      <button class="button button-assertive" ng-click="modal_ciudades.hide()">Cancelar</button>
+      <button class="button button-positive"  ng-click="setCiudad(ciudadSlug);modal_ciudades.hide()">Aceptar</button>
+    </div>
+  </ion-footer-bar>
+</ion-modal-view>
