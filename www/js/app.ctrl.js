@@ -118,7 +118,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
 
   // mostrar resultados en todos lados
   $scope.$watchCollection('resultados', function(n, o) {if(n!=o){
-    actualizar_vista_resultados(newValue, $scope.resultadoIndice);
+    actualizar_vista_resultados(n, $scope.resultadoIndice);
   }}, true);
 
 
@@ -136,6 +136,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
               origen: $scope.markerA.getLatLng(),
               destino: $scope.markerB.getLatLng(),
           }).success(function(data) {
+            $scope.status = '';
             if ( more ) {
                 $scope.resultados = $scope.resultados.concat(data.resultados);
             }
