@@ -1,5 +1,6 @@
 /*
- * Basado en
+ * 2015-2016 (c) Julian Perelli (jperelli@gmail.com)
+ *   partially based on
  *   https://gist.github.com/glenrobertson/3630960
  *   https://github.com/Leaflet/Leaflet/blob/master/src/layer/marker/Marker.js
  * 
