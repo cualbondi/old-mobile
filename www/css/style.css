@@ -59,7 +59,8 @@ div.leaflet-marker-icon {
           transition: margin .4s ease;
 }
 
-div.leaflet-marker-icon.leaflet-drag-target {
+div.leaflet-marker-icon.leaflet-drag-target.markerA,
+div.leaflet-marker-icon.leaflet-drag-target.markerB {
     margin-left: -10px !important;
     margin-top: -45px !important;
     width: 20px !important;
@@ -93,6 +94,10 @@ div.location-marker {
   box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
   -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.5);
   animation: fadeIn 0.5s infinite alternate;
+}
+
+div.location-marker.red {
+  background-color: red;
 }
 
 @keyframes fadeIn { 

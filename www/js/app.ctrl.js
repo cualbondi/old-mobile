@@ -32,6 +32,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     $scope.locationMarker.setLatLng([position.coords.latitude, position.coords.longitude]);
     $scope.locationMarker.setRadius(position.coords.accuracy);
     if ($scope.map) $scope.locationMarker.addTo($scope.map);
+    angular.element(document.getElementsByClassName('location-marker')).removeClass('red')
   })
   geolocationService.onError($scope, function(event, error) {
     // TODO 1: show and maintain error message on screen
@@ -39,6 +40,8 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
 
     // TODO 2: If error is because no permission from device, show message
     // with button to enable geolocation, (maybe do this inside service?)
+
+    angular.element(document.getElementsByClassName('location-marker')).addClass('red')
 
     console.log(error.code)
     console.log(error.message)
@@ -71,9 +74,9 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
 
 
   $scope.resultadosLayer = L.featureGroup();
-  $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 0, className: 'location-marker'});
-  $scope.markerA = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, className: 'markerA'});
-  $scope.markerB = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, className: 'markerB'});
+  $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 0, icon: new L.DivIcon({className: 'location-marker'})});
+  $scope.markerA = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerA'})});
+  $scope.markerB = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerB'})});
   $scope.markerA.on('moveend', function(e) {$scope.buscarRecorridos()});
   $scope.markerB.on('moveend', function(e) {$scope.buscarRecorridos()});
 
