@@ -74,9 +74,9 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
 
 
   $scope.resultadosLayer = L.featureGroup();
-  $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 0, icon: new L.DivIcon({className: 'location-marker'})});
-  $scope.markerA = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerA'})});
-  $scope.markerB = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerB'})});
+  $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 0, icon: new L.DivIcon({className: 'location-marker'}), opacity:0, fillOpacity:0.1});
+  $scope.markerA = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerA'}), weight:1, opacity:0.8, fillOpacity:0.2, color:'#ef5734'});
+  $scope.markerB = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerB'}), weight:1, opacity:0.8, fillOpacity:0.2, color:'#74b843'});
   $scope.markerA.on('moveend', function(e) {$scope.buscarRecorridos()});
   $scope.markerB.on('moveend', function(e) {$scope.buscarRecorridos()});
 
@@ -168,7 +168,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
               var p = dec[i].split(" ");
               r.push([parseFloat(p[1]), parseFloat(p[0])]);
           }
-          var ruta = L.polyline(r, {color:"black"});
+          var ruta = L.polyline(r, {color:"#37A", weight:7, opacity:0.9});
           ruta.addTo($scope.resultadosLayer);
       }
   }

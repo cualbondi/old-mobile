@@ -42,10 +42,11 @@ body {
 /* leaflet markers */
 
 div.leaflet-marker-icon {
-    margin-left: -10px !important;
-    margin-top: -50px !important;
-    width: 20px !important;
-    height: 50px !important;
+    margin-left: -25px !important;
+    margin-top: -60px !important;
+    width: 50px !important;
+    height: 60px !important;
+    opacity: 1 !important;
 }
 
 .leaflet-marker-icon {
@@ -61,10 +62,10 @@ div.leaflet-marker-icon {
 
 div.leaflet-marker-icon.leaflet-drag-target.markerA,
 div.leaflet-marker-icon.leaflet-drag-target.markerB {
-    margin-left: -10px !important;
-    margin-top: -45px !important;
-    width: 20px !important;
-    height: 50px !important;
+    margin-left: -25px !important;
+    margin-top: -55px !important;
+    width: 50px !important;
+    height: 60px !important;
 }
 
 div.leaflet-marker-icon.markerA {

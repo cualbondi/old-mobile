@@ -14,7 +14,7 @@ L.MarkerWithCircle = L.Marker.extend({
 
   initialize: function (latlng, options) {
     ret = L.Marker.prototype.initialize.call(this, latlng, options);
-    this._circle = new L.Circle(latlng, {radius:options.radius});
+    this._circle = new L.Circle(latlng, options);
     this.on('remove', function(e) {
       this._circle.remove();
     })
