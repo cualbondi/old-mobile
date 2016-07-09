@@ -38,10 +38,6 @@ L.MarkerWithCircle = L.Marker.extend({
     return this
   },
 
-  getBounds: function() {
-    return this._circle.getBounds();
-  },
-
   getLatLng: function () {
     return this._latlng;
   },

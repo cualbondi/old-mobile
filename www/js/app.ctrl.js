@@ -75,8 +75,8 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
 
   $scope.resultadosLayer = L.featureGroup();
   $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 0, icon: new L.DivIcon({className: 'location-marker'}), opacity:0, fillOpacity:0.1});
-  $scope.markerA = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerA'}), weight:1, opacity:0.8, fillOpacity:0.2, color:'#ef5734'});
-  $scope.markerB = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerB'}), weight:1, opacity:0.8, fillOpacity:0.2, color:'#74b843'});
+  $scope.markerA = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerA', popupAnchor: [0,-40]}), weight:1, opacity:0.8, fillOpacity:0.2, color:'#ef5734'});
+  $scope.markerB = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerB', popupAnchor: [0,-40]}), weight:1, opacity:0.8, fillOpacity:0.2, color:'#74b843'});
   $scope.markerA.on('moveend', function(e) {$scope.buscarRecorridos()});
   $scope.markerB.on('moveend', function(e) {$scope.buscarRecorridos()});
 
@@ -84,17 +84,17 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     if (!$scope.map) {
       $scope.map = new L.map('mapa',
         {
-          closePopupOnClick: false,
+          closePopupOnClick: true,
           attributionControl: false,
           zoomControl:false,
           contextmenu: true,
           contextmenuItems: [
             {
               text: 'Marcar Origen',
-              callback: function(e) { $scope.marcar(e, $scope.markerA); }
+              callback: function(e) { e.text = 'origen'; $scope.marcar(e, $scope.markerA); }
             }, {
               text: 'Marcar Destino',
-              callback: function(e) { $scope.marcar(e, $scope.markerB); }
+              callback: function(e) { e.text = 'destino';$scope.marcar(e, $scope.markerB); }
             },
             '-',
             {
