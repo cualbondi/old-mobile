@@ -85,8 +85,10 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
 
   $scope.locationMarker.bindPopup($compile(angular.element('<div><strong>Posición GPS</strong><div ng-click="marcar({latlng:locationMarker._latlng, text:\'GPS\'}, markerA)">marcar A</div><div ng-click="marcar({latlng:locationMarker._latlng, text:\'GPS\'}, markerB)">marcar B</div></div>'))($scope)[0]);
 
+  $scope.favoritos = Favoritos.items;
   Favoritos.onChange($scope, function(event, favoritos) {
     $scope.favoritosLayer.clearLayers();
+    $scope.favoritosMarkers = [];
     for (var i = 0; i < favoritos.length; i++) {
       var marker = L.marker(favoritos[i].latlng, {icon: new L.DivIcon({className: 'markerFavorito'})} );
       marker.bindPopup($compile(angular.element(
@@ -96,6 +98,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
         '<div ng-click="deleteFavorito('+i+')">Borrar fav</div>' +
         '</div>'
       ))($scope)[0]);
+      $scope.favoritosMarkers.push(marker)
       marker.addTo($scope.favoritosLayer);
     }
   }, true);
@@ -103,7 +106,13 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   $scope.deleteFavorito = function(i) {
     if (confirm('¿Seguro que desea borrar este favorito?'))
       Favoritos.delete(i);
-  }
+  };
+
+  $scope.clickFavorito = function(i) {
+    $scope.map.panTo($scope.favoritosMarkers[i].getLatLng());
+    $scope.favoritosMarkers[i].openPopup();
+    $scope.modal_favoritos.hide()
+  };
 
   $scope.init = function() {
     if (!$scope.map) {
@@ -267,6 +276,9 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   });
   $ionicModal.fromTemplateUrl('modal-login.html'   , {scope: $scope}).then(function(modal) {
     $scope.modal_login    = modal;
+  });
+  $ionicModal.fromTemplateUrl('modal-favoritos.html', {scope: $scope}).then(function(modal) {
+    $scope.modal_favoritos= modal;
   });
 
 }
