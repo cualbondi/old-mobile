@@ -1,8 +1,8 @@
 angular.module('app').controller('AppCtrl', AppCtrl);
 
-AppCtrl.$inject = ['$scope', '$http', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage']
+AppCtrl.$inject = ['$scope', '$http', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos']
 
-function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage) {
+function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos) {
 
   $scope.ciudades = localstorage.get('ciudades');
   if ( !$scope.ciudades ) {
@@ -22,7 +22,8 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
 
   $scope.ciudad = localstorage.get('ciudad');
 
-  $scope.radio = 200;
+  $scope.radio = 300;
+  Recorridos.setDefaultRadio($scope.radio);
   $scope.resultadoIndice = 0;
   $scope.resultados = [];
 
@@ -63,6 +64,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
       marker.setLatLng = null;
     }
     $scope.buscarRecorridos();
+    $scope.map.closePopup();
   };
 
 
@@ -74,11 +76,34 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
 
 
   $scope.resultadosLayer = L.featureGroup();
+  $scope.favoritosLayer = L.featureGroup();
   $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 0, icon: new L.DivIcon({className: 'location-marker'}), opacity:0, fillOpacity:0.1});
   $scope.markerA = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerA', popupAnchor: [0,-40]}), weight:1, opacity:0.8, fillOpacity:0.2, color:'#ef5734'});
   $scope.markerB = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerB', popupAnchor: [0,-40]}), weight:1, opacity:0.8, fillOpacity:0.2, color:'#74b843'});
   $scope.markerA.on('moveend', function(e) {$scope.buscarRecorridos()});
   $scope.markerB.on('moveend', function(e) {$scope.buscarRecorridos()});
+
+  $scope.locationMarker.bindPopup($compile(angular.element('<div><strong>Posición GPS</strong><div ng-click="marcar({latlng:locationMarker._latlng, text:\'GPS\'}, markerA)">marcar A</div><div ng-click="marcar({latlng:locationMarker._latlng, text:\'GPS\'}, markerB)">marcar B</div></div>'))($scope)[0]);
+
+  Favoritos.onChange($scope, function(event, favoritos) {
+    $scope.favoritosLayer.clearLayers();
+    for (var i = 0; i < favoritos.length; i++) {
+      var marker = L.marker(favoritos[i].latlng, {icon: new L.DivIcon({className: 'markerFavorito'})} );
+      marker.bindPopup($compile(angular.element(
+        '<div><strong>'+favoritos[i].nombre+'</strong>' +
+        '<div ng-click="marcar({latlng:{lat:'+favoritos[i].latlng.lat+',lng:'+favoritos[i].latlng.lng+'}, text:\''+favoritos[i].nombre+'\'}, markerA)">marcar A</div>' +
+        '<div ng-click="marcar({latlng:{lat:'+favoritos[i].latlng.lat+',lng:'+favoritos[i].latlng.lng+'}, text:\''+favoritos[i].nombre+'\'}, markerB)">marcar B</div>' +
+        '<div ng-click="deleteFavorito('+i+')">Borrar fav</div>' +
+        '</div>'
+      ))($scope)[0]);
+      marker.addTo($scope.favoritosLayer);
+    }
+  }, true);
+
+  $scope.deleteFavorito = function(i) {
+    if (confirm('¿Seguro que desea borrar este favorito?'))
+      Favoritos.delete(i);
+  }
 
   $scope.init = function() {
     if (!$scope.map) {
@@ -99,7 +124,10 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
             '-',
             {
               text: 'Marcar Favorito',
-              callback: $scope.nuevoFavorito
+              callback: function(e) {
+                var nombre = prompt('Nombre del favorito');
+                if (nombre) Favoritos.add(nombre, e.latlng);
+              }
             },
             '-',
             {
@@ -110,6 +138,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
       );
       $scope.map.addControl( L.control.zoom({position: 'bottomright'}) );
       $scope.map.addLayer($scope.resultadosLayer);
+      $scope.map.addLayer($scope.favoritosLayer);
       $scope.tileLayer.addTo($scope.map);
       if ($scope.locationMarker.getLatLng()) $scope.locationMarker.addTo($scope.map);
       $scope.map.on('click', function(e) {
@@ -229,6 +258,7 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
       $scope.closeLogin();
     }, 1000);
   };
+
 
   $ionicModal.fromTemplateUrl('modal-ciudades.html', {scope: $scope}).then(function(modal) {
     $scope.modal_ciudades = modal;

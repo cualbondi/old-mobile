@@ -40,7 +40,6 @@ body {
 
 
 /* leaflet markers */
-
 div.leaflet-marker-icon {
     margin-left: -25px !important;
     margin-top: -60px !important;
@@ -83,6 +82,43 @@ div.leaflet-marker-icon.markerB {
 div.leaflet-marker-icon.markerB.leaflet-drag-target {
     background: url(../img/markerB-drag.png);
 }
+
+
+
+div.markerFavorito {
+  margin-left: -10px !important;
+  margin-top: -10px !important;
+  width: 20px !important;
+  height: 20px !important;
+  opacity: 1 !important;
+}
+div.markerFavorito:before {
+    content: "\f24e";
+    display: inline-block;
+    font-family: "Ionicons";
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    text-rendering: auto;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    text-align: center;
+    line-height:20px;
+    width:20px;
+    height:20px;
+    color: #FEFEFE;
+    text-shadow:
+     2px  0px 1px #ef5734,
+    -2px  0px 1px #ef5734,
+     0px  2px 1px #ef5734,
+     0px -2px 1px #ef5734,
+     1px  1px 1px #ef5734,
+    -1px -1px 1px #ef5734,
+     1px -1px 1px #ef5734,
+    -1px  1px 1px #ef5734;
+  }
 
 
 div.location-marker {
