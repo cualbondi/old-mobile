@@ -31,8 +31,8 @@ angular.module('app')
     setDefaultRadio: function(radioOrigen, radioDestino) {
       if (typeof radioDestino == 'undefined')
         radioDestino = radioOrigen;
-      this.defaultParams.radioOrigen  = radioOrigen;
-      this.defaultParams.radioDestino = radioDestino;
+      this.defaultParams.radio_origen  = radioOrigen;
+      this.defaultParams.radio_destino = radioDestino;
     },
 
     search: function(params) {
