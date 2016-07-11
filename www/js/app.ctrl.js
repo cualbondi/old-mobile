@@ -21,8 +21,10 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   }
 
   $scope.ciudad = localstorage.get('ciudad');
-  Recorridos.setCiudad($scope.ciudad.slug);
-  Geocoder.setCiudad($scope.ciudad.slug)
+  if ($scope.ciudad) {
+    Recorridos.setCiudad($scope.ciudad.slug);
+    Geocoder.setCiudad($scope.ciudad.slug)
+  }
 
   $scope.inputA = '';
   $scope.inputB = '';
