@@ -1,8 +1,8 @@
 angular.module('app').controller('AppCtrl', AppCtrl);
 
-AppCtrl.$inject = ['$scope', '$http', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos']
+AppCtrl.$inject = ['$scope', '$http', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder']
 
-function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos) {
+function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder) {
 
   $scope.ciudades = localstorage.get('ciudades');
   if ( !$scope.ciudades ) {
@@ -21,6 +21,11 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   }
 
   $scope.ciudad = localstorage.get('ciudad');
+  Recorridos.setCiudad($scope.ciudad.slug);
+  Geocoder.setCiudad($scope.ciudad.slug)
+
+  $scope.inputA = '';
+  $scope.inputB = '';
 
   $scope.radio = 300;
   Recorridos.setDefaultRadio($scope.radio);
@@ -55,11 +60,10 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
       marker.setLatLng(e.latlng).addTo($scope.map);
       if (marker == $scope.markerA) $scope.inputA = e.text;
       if (marker == $scope.markerB) $scope.inputB = e.text;
+      if ( marker.getPopup() )
+        marker.unbindPopup();
       if ( e.text )
         marker.bindPopup(e.text);
-      else
-        if ( marker.getPopup() )
-          marker.unbindPopup();
     }
     else {
       $scope.map.removeLayer(marker);
@@ -224,6 +228,8 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
         $scope.ciudad = $scope.ciudades[i];
     }
     localstorage.set('ciudad', $scope.ciudad);
+    Recorridos.setCiudad(ciudadSlug);
+    Geocoder.setCiudad(ciudadSlug)
     $scope.init();
   }
 
@@ -243,6 +249,23 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   }
 
 
+  $scope.buscarA = function(a) {
+    $scope.origenesSuggestions_loading = true;
+    $scope.origenesSuggestions = null;
+    $scope.modal_buscarA.show();
+    Geocoder.search($scope.inputA).success(function(data){
+      $scope.origenesSuggestions_loading = false;
+      $scope.origenesSuggestions = data;
+    }).error(function(){
+      // TODO
+    })
+  }
+
+  $scope.setOrigenSuggestion = function() {
+    var sugg = $scope.origenesSuggestions[$scope.origenSelected];
+    $scope.origenSelected = null;
+    $scope.marcar({latlng:{lat:sugg.geom.coordinates[1],lng:sugg.geom.coordinates[0]}, text:sugg.nombre}, $scope.markerA);
+  }
 
   // Form data for the login modal
   $scope.loginData = {};
@@ -286,6 +309,9 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   });
   $ionicModal.fromTemplateUrl('modal-favoritos.html', {scope: $scope}).then(function(modal) {
     $scope.modal_favoritos= modal;
+  });
+  $ionicModal.fromTemplateUrl('modal-buscarA.html', {scope: $scope}).then(function(modal) {
+    $scope.modal_buscarA= modal;
   });
 
 }

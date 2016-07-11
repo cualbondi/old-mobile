@@ -1,0 +1,23 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+    <h1 class="title">Seleccionar Origen</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="modal_buscarA.hide()"><i class="icon ion-close"></i></button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <ion-spinner ng-show="origenesSuggestions_loading"></ion-spinner>
+    <ion-list>
+      <ion-radio ng-repeat="o in origenesSuggestions" ng-model="$parent.$parent.$parent.$parent.origenSelected" ng-value="$index">{{o.nombre}}</ion-radio>
+    </ion-list>
+  </ion-content>
+  <ion-footer-bar>
+    <div class="buttons">
+    </div>
+    <h1 class="title"></h1>
+    <div class="buttons">
+      <button class="button button-assertive" ng-click="modal_buscarA.hide()">Cancelar</button>
+      <button class="button button-positive"  ng-click="setOrigenSuggestion();modal_buscarA.hide()">Aceptar</button>
+    </div>
+  </ion-footer-bar>
+</ion-modal-view>
