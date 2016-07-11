@@ -53,6 +53,8 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   $scope.marcar = function(e, marker) {
     if ( e.latlng ) {
       marker.setLatLng(e.latlng).addTo($scope.map);
+      if (marker == $scope.markerA) $scope.inputA = e.text;
+      if (marker == $scope.markerB) $scope.inputB = e.text;
       if ( e.text )
         marker.bindPopup(e.text);
       else
@@ -78,10 +80,15 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   $scope.resultadosLayer = L.featureGroup();
   $scope.favoritosLayer = L.featureGroup();
   $scope.locationMarker = L.markerWithCircle(null, {draggable: false, radius: 0, icon: new L.DivIcon({className: 'location-marker'}), opacity:0, fillOpacity:0.1});
+  // $scope.MarkerA && $scope.MarkerB
+  // {
+  //  type: 'GPS' || 'Favorito' || 'Click en mapa' || 'Busqueda' || null/undefined,
+  //  latlng: L.latLng
+  // }
   $scope.markerA = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerA', popupAnchor: [0,-40]}), weight:1, opacity:0.8, fillOpacity:0.2, color:'#ef5734'});
   $scope.markerB = L.markerWithCircle(null, {draggable: true, radius: $scope.radio, icon: new L.DivIcon({className: 'markerB', popupAnchor: [0,-40]}), weight:1, opacity:0.8, fillOpacity:0.2, color:'#74b843'});
-  $scope.markerA.on('moveend', function(e) {$scope.buscarRecorridos()});
-  $scope.markerB.on('moveend', function(e) {$scope.buscarRecorridos()});
+  $scope.markerA.on('moveend', function(e) {$scope.$apply(function() {$scope.marcar({text:'Origen marcado manualmente en mapa', latlng:e.target._latlng},$scope.markerA) }); });
+  $scope.markerB.on('moveend', function(e) {$scope.$apply(function() {$scope.marcar({text:'Destino marcado manualmente en mapa', latlng:e.target._latlng},$scope.markerB) }); });
 
   $scope.locationMarker.bindPopup($compile(angular.element('<div><strong>Posición GPS</strong><div ng-click="marcar({latlng:locationMarker._latlng, text:\'GPS\'}, markerA)">marcar A</div><div ng-click="marcar({latlng:locationMarker._latlng, text:\'GPS\'}, markerB)">marcar B</div></div>'))($scope)[0]);
 
@@ -92,9 +99,9 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
     for (var i = 0; i < favoritos.length; i++) {
       var marker = L.marker(favoritos[i].latlng, {icon: new L.DivIcon({className: 'markerFavorito'})} );
       marker.bindPopup($compile(angular.element(
-        '<div><strong>'+favoritos[i].nombre+'</strong>' +
-        '<div ng-click="marcar({latlng:{lat:'+favoritos[i].latlng.lat+',lng:'+favoritos[i].latlng.lng+'}, text:\''+favoritos[i].nombre+'\'}, markerA)">marcar A</div>' +
-        '<div ng-click="marcar({latlng:{lat:'+favoritos[i].latlng.lat+',lng:'+favoritos[i].latlng.lng+'}, text:\''+favoritos[i].nombre+'\'}, markerB)">marcar B</div>' +
+        '<div><strong>Favorito:'+favoritos[i].nombre+'</strong>' +
+        '<div ng-click="marcar({latlng:{lat:'+favoritos[i].latlng.lat+',lng:'+favoritos[i].latlng.lng+'}, text:\'Favorito: '+favoritos[i].nombre+'\'}, markerA)">marcar A</div>' +
+        '<div ng-click="marcar({latlng:{lat:'+favoritos[i].latlng.lat+',lng:'+favoritos[i].latlng.lng+'}, text:\'Favorito: '+favoritos[i].nombre+'\'}, markerB)">marcar B</div>' +
         '<div ng-click="deleteFavorito('+i+')">Borrar fav</div>' +
         '</div>'
       ))($scope)[0]);
@@ -125,10 +132,10 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
           contextmenuItems: [
             {
               text: 'Marcar Origen',
-              callback: function(e) { e.text = 'origen'; $scope.marcar(e, $scope.markerA); }
+              callback: function(e) { $scope.$apply(function() {e.text = 'Origen marcado manualmente en mapa'; $scope.marcar(e, $scope.markerA);}); }
             }, {
               text: 'Marcar Destino',
-              callback: function(e) { e.text = 'destino';$scope.marcar(e, $scope.markerB); }
+              callback: function(e) { $scope.$apply(function() {e.text = 'Destino marcado manualmente en mapa';$scope.marcar(e, $scope.markerB);}); }
             },
             '-',
             {
@@ -171,8 +178,8 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
           more = false;
           p = 1;
       }
-      $scope.busqueda=true;
       if ( $scope.markerA.getLatLng() !== null && $scope.markerB.getLatLng() !== null ) {
+          $scope.busqueda=true;
           $scope.status = 'buscando lineas';
           Recorridos.search({
               origen: $scope.markerA.getLatLng(),
