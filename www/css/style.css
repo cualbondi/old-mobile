@@ -8,6 +8,16 @@ body {
   /*opacity: 1;*/
 }
 
+.bar-stable.bar-top {
+  border-bottom: none;
+  background-image: none;
+}
+.item-input-inset {
+  position: absolute;
+}
+.bar-stable .button .icon.ion-search::before {
+  font-size: 20px;
+}
 .bar-stable h1.title {
   cursor: pointer;
 }
