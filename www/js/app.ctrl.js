@@ -1,8 +1,8 @@
 angular.module('app').controller('AppCtrl', AppCtrl);
 
-AppCtrl.$inject = ['$scope', '$http', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder']
+AppCtrl.$inject = ['$scope', '$http', '$templateRequest', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder']
 
-function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder) {
+function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder) {
 
   $scope.ciudades = localstorage.get('ciudades');
   if ( !$scope.ciudades ) {
@@ -102,18 +102,18 @@ function AppCtrl($scope, $http, $ionicModal, $timeout, $ionicSideMenuDelegate, g
   Favoritos.onChange($scope, function(event, favoritos) {
     $scope.favoritosLayer.clearLayers();
     $scope.favoritosMarkers = [];
-    for (var i = 0; i < favoritos.length; i++) {
-      var marker = L.marker(favoritos[i].latlng, {icon: new L.DivIcon({className: 'markerFavorito'})} );
-      marker.bindPopup($compile(angular.element(
-        '<div><strong>Favorito:'+favoritos[i].nombre+'</strong>' +
-        '<div ng-click="marcar({latlng:{lat:'+favoritos[i].latlng.lat+',lng:'+favoritos[i].latlng.lng+'}, text:\'Favorito: '+favoritos[i].nombre+'\'}, markerA)">marcar A</div>' +
-        '<div ng-click="marcar({latlng:{lat:'+favoritos[i].latlng.lat+',lng:'+favoritos[i].latlng.lng+'}, text:\'Favorito: '+favoritos[i].nombre+'\'}, markerB)">marcar B</div>' +
-        '<div ng-click="deleteFavorito('+i+')">Borrar fav</div>' +
-        '</div>'
-      ))($scope)[0]);
-      $scope.favoritosMarkers.push(marker)
-      marker.addTo($scope.favoritosLayer);
-    }
+    $templateRequest("popup-favorito.html").then(function(html) {
+      for (var i = 0; i < favoritos.length; i++) {
+        var $scopefav = $scope.$new(true);
+        $scopefav.deleteFavorito = (function(i) { return function(){$scope.deleteFavorito(i);} })(i);
+        $scopefav.favorito= favoritos[i];
+        var template = angular.element(html);
+        var marker = L.marker(favoritos[i].latlng, {icon: new L.DivIcon({className: 'markerFavorito'})} );
+        marker.bindPopup($compile(template)($scopefav)[0]);
+        $scope.favoritosMarkers.push(marker)
+        marker.addTo($scope.favoritosLayer);
+      }
+    });
   }, true);
 
   $scope.deleteFavorito = function(i) {

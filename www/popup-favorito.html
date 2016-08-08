@@ -1,0 +1,6 @@
+<div>
+  <strong>Favorito:{{favorito.nombre}}</strong>
+  <div ng-click="$parent.marcar({latlng:{lat:favorito.latlng.lat, lng:favorito.latlng.lng}, text:'Favorito: '+favorito.nombre}, $parent.markerA)">marcar A</div>
+  <div ng-click="$parent.marcar({latlng:{lat:favorito.latlng.lat, lng:favorito.latlng.lng}, text:'Favorito: '+favorito.nombre}, $parent.markerB)">marcar B</div>
+  <div ng-click="deleteFavorito()">Borrar fav</div>
+</div>
