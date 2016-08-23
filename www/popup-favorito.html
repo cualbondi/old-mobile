@@ -1,6 +1,16 @@
-<div>
-  <strong>Favorito:{{favorito.nombre}}</strong>
-  <div ng-click="$parent.marcar({latlng:{lat:favorito.latlng.lat, lng:favorito.latlng.lng}, text:'Favorito: '+favorito.nombre}, $parent.markerA)">marcar A</div>
-  <div ng-click="$parent.marcar({latlng:{lat:favorito.latlng.lat, lng:favorito.latlng.lng}, text:'Favorito: '+favorito.nombre}, $parent.markerB)">marcar B</div>
-  <div ng-click="deleteFavorito()">Borrar fav</div>
-</div>
+<ion-list class="withimgs">
+  <ion-item class="bar bar-header bar-stable">
+    <h2 class="title"><i class="icon ion-star"></i> {{favorito.nombre}}</h2>
+    <button class="button" ng-click="$parent.$parent.alert('Fav option click')">
+      <i class="icon ion-android-more-vertical"></i>
+    </button>
+  </ion-item>
+  <ion-item ng-click="$parent.$parent.marcar({latlng:{lat:favorito.latlng.lat, lng:favorito.latlng.lng}, text:'Favorito: '+favorito.nombre}, $parent.$parent.markerA)">
+    <img src="img/markerA.png">
+    Marcar origen
+  </ion-item>
+  <ion-item ng-click="$parent.$parent.marcar({latlng:{lat:favorito.latlng.lat, lng:favorito.latlng.lng}, text:'Favorito: '+favorito.nombre}, $parent.$parent.markerB)">
+    <img src="img/markerB.png">
+    Marcar destino
+  </ion-item>
+</ion-list>

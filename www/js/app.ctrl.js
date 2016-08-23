@@ -101,6 +101,10 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
     $scope.locationMarker.bindPopup($compile(template)($scope)[0]);
   });
 
+  $scope.alert = function(msg) {
+    alert(msg)
+  };
+
   $scope.favoritos = Favoritos.items;
   Favoritos.onChange($scope, function(event, favoritos) {
     $scope.favoritosLayer.clearLayers();

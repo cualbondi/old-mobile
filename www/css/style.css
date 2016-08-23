@@ -178,3 +178,9 @@ div.location-marker.red {
 .leaflet-popup-content .withimgs ion-item {
   padding-left: 50px;
 }
+.leaflet-popup-content .bar-stable {
+  border: none;
+}
+.leaflet-popup-content .bar-stable .button {
+  border: none;
+}

@@ -1,6 +1,9 @@
 <ion-list class="withimgs">
   <ion-item class="bar bar-header bar-stable">
-    <h2 class="title">Posición GPS</h2>
+    <h2 class="title">GPS</h2>
+    <button class="button" ng-click="alert('GPS option click')">
+      <i class="icon ion-android-more-vertical"></i>
+    </button>
   </ion-item>
   <ion-item ng-click="marcar({latlng:locationMarker._latlng, text:'GPS'}, markerA)">
     <img src="img/markerA.png">
