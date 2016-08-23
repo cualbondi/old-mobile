@@ -321,12 +321,37 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
       $scope.origenesSuggestions_error = 'No se pudo buscar en este momento';
     })
   }
-
   $scope.setOrigenSuggestion = function() {
     try {
       var sugg = $scope.origenesSuggestions[$scope.origenSelected];
       $scope.origenSelected = null;
       $scope.marcar({latlng:{lat:sugg.geom.coordinates[1],lng:sugg.geom.coordinates[0]}, text:sugg.nombre}, $scope.markerA);
+    }
+    catch (e) {}
+  }
+
+
+  $scope.buscarB = function(a) {
+    $scope.destinosSuggestions_loading = true;
+    $scope.destinosSuggestions = null;
+    $scope.modal_buscarB.show();
+    $scope.destinosSuggestions_error = false;
+    Geocoder.search($scope.inputB).success(function(data){
+      $scope.destinosSuggestions_loading = false;
+      $scope.destinosSuggestions = data;
+      if ($scope.destinosSuggestions.length == 1) {
+        $scope.destinoSelected = 0;
+      }
+    }).error(function(){
+      $scope.destinosSuggestions_loading = false;
+      $scope.destinosSuggestions_error = 'No se pudo buscar en este momento';
+    })
+  }
+  $scope.setDestinoSuggestion = function() {
+    try {
+      var sugg = $scope.destinosSuggestions[$scope.destinoSelected];
+      $scope.destinoSelected = null;
+      $scope.marcar({latlng:{lat:sugg.geom.coordinates[1],lng:sugg.geom.coordinates[0]}, text:sugg.nombre}, $scope.markerB);
     }
     catch (e) {}
   }
@@ -376,6 +401,9 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
   });
   $ionicModal.fromTemplateUrl('modal-buscarA.html', {scope: $scope}).then(function(modal) {
     $scope.modal_buscarA= modal;
+  });
+  $ionicModal.fromTemplateUrl('modal-buscarB.html', {scope: $scope}).then(function(modal) {
+    $scope.modal_buscarB= modal;
   });
 
 }

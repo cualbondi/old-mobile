@@ -1,0 +1,32 @@
+<ion-modal-view>
+  <ion-header-bar class="bar-positive">
+    <h1 class="title" ng-show="destinosSuggestions_loading">Buscando destino</h1>
+    <h1 class="title" ng-hide="destinosSuggestions_loading">Seleccionar Destino</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="modal_buscarB.hide()"><i class="icon ion-close"></i></button>
+    </div>
+  </ion-header-bar>
+  <ion-content>
+    <div ng-show="destinosSuggestions_loading">Buscando "{{inputB}}" por favor espere unos segundos</div>
+    <ion-spinner ng-show="destinosSuggestions_loading"></ion-spinner>
+    <ion-list>
+      <ion-radio ng-repeat="o in destinosSuggestions" ng-model="$parent.$parent.$parent.$parent.destinoSelected" ng-value="$index">{{o.nombre}}</ion-radio>
+    </ion-list>
+    <div ng-show="destinosSuggestions.length == 0 && !destinosSuggestions_loading">
+      No se encontraron resultados
+    </div>
+    <div ng-show="destinosSuggestions_error && !destinosSuggestions_loading">
+      Error en la búsqueda, por favor vuelva a intentarlo mas tarde.
+      <div>{{destinosSuggestions_error}}</div>
+    </div>
+  </ion-content>
+  <ion-footer-bar>
+    <div class="buttons">
+    </div>
+    <h1 class="title"></h1>
+    <div class="buttons">
+      <button class="button button-assertive" ng-click="modal_buscarB.hide()">Cancelar</button>
+      <button class="button button-positive"  ng-click="setDestinoSuggestion();modal_buscarB.hide()">Aceptar</button>
+    </div>
+  </ion-footer-bar>
+</ion-modal-view>
