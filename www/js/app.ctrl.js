@@ -96,7 +96,10 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
   $scope.markerA.on('moveend', function(e) {$scope.$apply(function() {$scope.marcar({text:'Origen marcado manualmente en mapa', latlng:e.target._latlng},$scope.markerA) }); });
   $scope.markerB.on('moveend', function(e) {$scope.$apply(function() {$scope.marcar({text:'Destino marcado manualmente en mapa', latlng:e.target._latlng},$scope.markerB) }); });
 
-  $scope.locationMarker.bindPopup($compile(angular.element('<div><strong>Posición GPS</strong><div ng-click="marcar({latlng:locationMarker._latlng, text:\'GPS\'}, markerA)">marcar A</div><div ng-click="marcar({latlng:locationMarker._latlng, text:\'GPS\'}, markerB)">marcar B</div></div>'))($scope)[0]);
+  $templateRequest("popup-gps.html").then(function(html) {
+    var template = angular.element(html);
+    $scope.locationMarker.bindPopup($compile(template)($scope)[0]);
+  });
 
   $scope.favoritos = Favoritos.items;
   Favoritos.onChange($scope, function(event, favoritos) {

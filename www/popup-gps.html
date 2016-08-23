@@ -1,0 +1,13 @@
+<ion-list class="withimgs">
+  <ion-item class="bar bar-header bar-stable">
+    <h2 class="title">Posición GPS</h2>
+  </ion-item>
+  <ion-item ng-click="marcar({latlng:locationMarker._latlng, text:'GPS'}, markerA)">
+    <img src="img/markerA.png">
+    Marcar origen
+  </ion-item>
+  <ion-item ng-click="marcar({latlng:locationMarker._latlng, text:'GPS'}, markerB)">
+    <img src="img/markerB.png">
+    Marcar destino
+  </ion-item>
+</ion-list>
