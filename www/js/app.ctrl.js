@@ -115,7 +115,7 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
         $scopefav.deleteFavorito = (function(i) { return function(){$scope.deleteFavorito(i);} })(i);
         $scopefav.favorito= favoritos[i];
         var template = angular.element(html);
-        var marker = L.marker(favoritos[i].latlng, {icon: new L.DivIcon({className: 'markerFavorito'})} );
+        var marker = L.marker(favoritos[i].latlng, {icon: new L.DivIcon({className: 'markerFavorito'}), pane: 'tilePane'} );
         marker.bindPopup($compile(template)($scopefav)[0]);
         $scope.favoritosMarkers.push(marker)
         marker.addTo($scope.favoritosLayer);
@@ -138,6 +138,8 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
     if (!$scope.map) {
       $scope.map = new L.map('mapa',
         {
+          zoomSnap: 0.5,
+          zoomDelta: 0.5,
           closePopupOnClick: true,
           attributionControl: false,
           zoomControl:false,
@@ -228,8 +230,51 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
               var p = dec[i].split(" ");
               r.push([parseFloat(p[1]), parseFloat(p[0])]);
           }
-          var ruta = L.polyline(r, {color:"#37A", weight:7, opacity:0.9});
-          ruta.addTo($scope.resultadosLayer);
+          var ruta = L.polyline(r, {color:"#37A", weight:8, opacity:0.9});
+          var flechas1 = L.polylineDecorator(ruta, { patterns: [{
+            offset: '42',
+            repeat: 150,
+            symbol: L.Symbol.arrowHead({
+              pixelSize: 4,
+              polygon: false,
+              pathOptions: {
+                color: '#FFF',
+                opacity: 0.5,
+                weight: 2
+              }
+            })
+          }]});
+          var flechas2 = L.polylineDecorator(ruta, { patterns: [{
+            offset: '50',
+            repeat: 150,
+            symbol: L.Symbol.arrowHead({
+              pixelSize: 4,
+              polygon: false,
+              pathOptions: {
+                color: '#FFF',
+                opacity: 0.7,
+                weight: 2
+              }
+            })
+          }]});
+          var flechas3 = L.polylineDecorator(ruta, { patterns: [{
+            offset: '58',
+            repeat: 150,
+            symbol: L.Symbol.arrowHead({
+              pixelSize: 4,
+              polygon: false,
+              pathOptions: {
+                color: '#FFF',
+                opacity: 0.9,
+                weight: 2
+              }
+            })
+          }]});
+
+          $scope.resultadosLayer.addLayer(ruta);
+          $scope.resultadosLayer.addLayer(flechas1);
+          $scope.resultadosLayer.addLayer(flechas2);
+          $scope.resultadosLayer.addLayer(flechas3);
       }
   }
 
