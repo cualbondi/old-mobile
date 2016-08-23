@@ -184,3 +184,29 @@ div.location-marker.red {
 .leaflet-popup-content .bar-stable .button {
   border: none;
 }
+
+.leaflet-contextmenu {
+  padding: 0;
+  border-radius: 0;
+}
+.leaflet-contextmenu a.leaflet-contextmenu-item {
+  border-color: #ddd;
+  background-color: #fff;
+  color: #444;
+  position: relative;
+  z-index: 2;
+  display: block;
+  margin: -1px;
+  padding: 16px;
+  border-width: 1px;
+  border-style: solid;
+  font-size: 16px;
+}
+img.leaflet-contextmenu-icon {
+  margin: -13px 8px 0 0;
+  width: auto;
+  height: 38px;
+}
+.leaflet-contextmenu-separator {
+  margin: 1px 0;
+}

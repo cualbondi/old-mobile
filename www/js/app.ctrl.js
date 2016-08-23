@@ -145,33 +145,35 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
           contextmenuItems: [
             {
               text: 'Marcar Origen',
+              icon: 'img/markerA.png',
               callback: function(e) { $scope.$apply(function() {e.text = 'Origen marcado manualmente en mapa'; $scope.marcar(e, $scope.markerA);}); }
             }, {
               text: 'Marcar Destino',
+              icon: 'img/markerB.png',
               callback: function(e) { $scope.$apply(function() {e.text = 'Destino marcado manualmente en mapa';$scope.marcar(e, $scope.markerB);}); }
             },
             '-',
             {
               text: 'Marcar Favorito',
+              iconCls: 'icon ion-star',
               callback: function(e) {
-                var nombre = prompt('Nombre del favorito');
-                if (nombre) Favoritos.add(nombre, e.latlng);
+                $scope.$apply(function() {
+                  var nombre = prompt('Nombre del favorito');
+                  if (nombre) Favoritos.add(nombre, e.latlng);
+                })
               }
-            },
-            '-',
-            {
-              text: 'Cerrar'
             }
         ]
         }
       );
+      $scope.map.on('contextmenu.show', function() { $scope.map.closePopup(); });
       $scope.map.addControl( L.control.zoom({position: 'bottomright'}) );
       $scope.map.addLayer($scope.resultadosLayer);
       $scope.map.addLayer($scope.favoritosLayer);
       $scope.tileLayer.addTo($scope.map);
       if ($scope.locationMarker.getLatLng()) $scope.locationMarker.addTo($scope.map);
       $scope.map.on('click', function(e) {
-        $scope.map.contextmenu.showAt(e.latlng);
+        //$scope.map.contextmenu.showAt(e.latlng);
       });
     }
     $scope.map.setView($scope.ciudad.latlng, 12);
