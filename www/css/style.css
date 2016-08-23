@@ -99,11 +99,12 @@ div.leaflet-marker-icon.markerB.leaflet-drag-target {
 
 
 div.markerFavorito {
-  margin-left: -10px !important;
-  margin-top: -10px !important;
-  width: 20px !important;
-  height: 20px !important;
+  margin-left: -15px !important;
+  margin-top: -15px !important;
+  width: 30px !important;
+  height: 30px !important;
   opacity: 1 !important;
+  font-size: 20px;
 }
 div.markerFavorito:before {
     content: "\f24e";
@@ -118,9 +119,9 @@ div.markerFavorito:before {
     line-height: 1;
     -webkit-font-smoothing: antialiased;
     text-align: center;
-    line-height:20px;
-    width:20px;
-    height:20px;
+    line-height:30px;
+    width:30px;
+    height:30px;
     color: #FEFEFE;
     text-shadow:
      2px  0px 1px #ef5734,
