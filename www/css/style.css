@@ -210,3 +210,8 @@ img.leaflet-contextmenu-icon {
 .leaflet-contextmenu-separator {
   margin: 1px 0;
 }
+
+ion-spinner {
+  display: block;
+  margin: 8px auto;
+}

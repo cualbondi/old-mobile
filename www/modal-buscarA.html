@@ -1,15 +1,24 @@
 <ion-modal-view>
   <ion-header-bar class="bar-positive">
-    <h1 class="title">Seleccionar Origen</h1>
+    <h1 class="title" ng-show="origenesSuggestions_loading">Buscando origen</h1>
+    <h1 class="title" ng-hide="origenesSuggestions_loading">Seleccionar Origen</h1>
     <div class="buttons">
       <button class="button button-clear" ng-click="modal_buscarA.hide()"><i class="icon ion-close"></i></button>
     </div>
   </ion-header-bar>
   <ion-content>
+    <div ng-show="origenesSuggestions_loading">Buscando "{{inputA}}" por favor espere unos segundos</div>
     <ion-spinner ng-show="origenesSuggestions_loading"></ion-spinner>
     <ion-list>
       <ion-radio ng-repeat="o in origenesSuggestions" ng-model="$parent.$parent.$parent.$parent.origenSelected" ng-value="$index">{{o.nombre}}</ion-radio>
     </ion-list>
+    <div ng-show="origenesSuggestions.length == 0 && !origenesSuggestions_loading">
+      No se encontraron resultados
+    </div>
+    <div ng-show="origenesSuggestions_error && !origenesSuggestions_loading">
+      Error en la búsqueda, por favor vuelva a intentarlo mas tarde.
+      <div>{{origenesSuggestions_error}}</div>
+    </div>
   </ion-content>
   <ion-footer-bar>
     <div class="buttons">

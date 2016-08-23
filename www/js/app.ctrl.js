@@ -309,18 +309,26 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
     $scope.origenesSuggestions_loading = true;
     $scope.origenesSuggestions = null;
     $scope.modal_buscarA.show();
+    $scope.origenesSuggestions_error = false;
     Geocoder.search($scope.inputA).success(function(data){
       $scope.origenesSuggestions_loading = false;
       $scope.origenesSuggestions = data;
+      if ($scope.origenesSuggestions.length == 1) {
+        $scope.origenSelected = 0;
+      }
     }).error(function(){
-      // TODO
+      $scope.origenesSuggestions_loading = false;
+      $scope.origenesSuggestions_error = 'No se pudo buscar en este momento';
     })
   }
 
   $scope.setOrigenSuggestion = function() {
-    var sugg = $scope.origenesSuggestions[$scope.origenSelected];
-    $scope.origenSelected = null;
-    $scope.marcar({latlng:{lat:sugg.geom.coordinates[1],lng:sugg.geom.coordinates[0]}, text:sugg.nombre}, $scope.markerA);
+    try {
+      var sugg = $scope.origenesSuggestions[$scope.origenSelected];
+      $scope.origenSelected = null;
+      $scope.marcar({latlng:{lat:sugg.geom.coordinates[1],lng:sugg.geom.coordinates[0]}, text:sugg.nombre}, $scope.markerA);
+    }
+    catch (e) {}
   }
 
   // Form data for the login modal
