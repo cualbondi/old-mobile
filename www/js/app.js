@@ -23,7 +23,7 @@ function init($ionicPlatform, geolocationService, $timeout) {
     if (window.AdMob) {
       window.AdMob.createBanner( {
         adId: 'ca-app-pub-1193419141108967/7166287944', 
-        isTesting: true,
+        isTesting: false,
         overlap: false, 
         offsetTopBar: false, 
         position: window.AdMob.AD_POSITION.BOTTOM_CENTER,
