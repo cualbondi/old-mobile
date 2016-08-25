@@ -1,8 +1,8 @@
 angular.module('app').controller('AppCtrl', AppCtrl);
 
-AppCtrl.$inject = ['$scope', '$http', '$templateRequest', '$ionicModal', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder']
+AppCtrl.$inject = ['$scope', '$http', '$templateRequest', '$ionicModal', '$ionicPopover', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder']
 
-function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder) {
+function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder) {
 
   $scope.ciudades = localstorage.get('ciudades');
   if ( !$scope.ciudades ) {
@@ -387,6 +387,11 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
     }, 1000);
   };
 
+  $scope.popover_favorito_show = function($event, favorito) {
+    $scope.favoritoPopover = favorito;
+    $scope.popover_favorito.show($event);
+  }
+
 
   $ionicModal.fromTemplateUrl('modal-ciudades.html', {scope: $scope}).then(function(modal) {
     $scope.modal_ciudades = modal;
@@ -405,5 +410,7 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $timeout, $ionicS
   $ionicModal.fromTemplateUrl('modal-buscarB.html', {scope: $scope}).then(function(modal) {
     $scope.modal_buscarB= modal;
   });
-
+  $ionicPopover.fromTemplateUrl('popover-favorito.html', {scope: $scope}).then(function(popover) {
+    $scope.popover_favorito = popover;
+  });
 }

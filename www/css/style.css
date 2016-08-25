@@ -215,3 +215,8 @@ ion-spinner {
   display: block;
   margin: 8px auto;
 }
+
+.popover {
+  height: auto !important;
+  width: auto !important;
+}
