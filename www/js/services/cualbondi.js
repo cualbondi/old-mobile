@@ -2,27 +2,27 @@ angular.module('app')
 
 .factory('Recorridos', function($http) {
 
+  var API_DEFAULT_PARAMS = {
+    // API configuration
+    callback: 'JSON_CALLBACK',
+
+    // setteables/overrideables
+    radio_origen: 100,
+    radio_destino: 100,
+    c: 'la-plata',
+    combinar: 'false',
+    p: 1,
+  };
   if ( typeof device !== 'undefined' ) {
-    $scope.API_EXTRA_PARAMS.uuid = device.uuid;
-    $scope.API_EXTRA_PARAMS.source = device.platform;
-    $scope.device_uuid = device.platform + device.uuid;
+    API_DEFAULT_PARAMS.uuid = device.uuid;
+    API_DEFAULT_PARAMS.source = device.platform;
   }
   var API_ENDPOINT = 'https://cualbondi.com.ar/api/';
 
 
   return {
 
-    defaultParams: {
-      // API configuration
-      callback: 'JSON_CALLBACK',
-
-      // setteables/overrideables
-      radio_origen: 100,
-      radio_destino: 100,
-      c: 'la-plata',
-      combinar: 'false',
-      p: 1,
-    },
+    defaultParams: angular.copy(API_DEFAULT_PARAMS),
 
     setCiudad: function(ciudad_slug) {
       this.defaultParams.c = ciudad_slug;
