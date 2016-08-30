@@ -1,6 +1,6 @@
 {
   "name": "cualbondi",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "cualbondi v3",
   "dependencies": {
     "gulp": "^3.5.6",
