@@ -26,6 +26,12 @@ angular.module('app').factory('Favoritos', ['localstorage', '$rootScope', '$ioni
       localstorage.set('favoritos', _favoritos);
       $rootScope.$emit('FavoritosService:change', _favoritos);
     },
+    edit: function(fav, props) {
+      var i = _favoritos.indexOf(fav);
+      angular.merge(_favoritos[i], props);
+      localstorage.set('favoritos', _favoritos);
+      $rootScope.$emit('FavoritosService:changeOne', _favoritos, i, _favoritos[i]);
+    },
     onChange: function(scope, callback, callOnInit) {
       var handler = $rootScope.$on('FavoritosService:change', callback);
       scope.$on('$destroy', handler);

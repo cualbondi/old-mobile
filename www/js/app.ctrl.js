@@ -122,7 +122,7 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
     $templateRequest("popup-favorito.html").then(function(html) {
       for (var i = 0; i < favoritos.length; i++) {
         var $scopefav = $scope.$new(true);
-        $scopefav.deleteFavorito = (function(i) { return function(){$scope.deleteFavorito(i);} })(i);
+        $scopefav.index = i;
         $scopefav.favorito= favoritos[i];
         var template = angular.element(html);
         var marker = L.marker(favoritos[i].latlng, {icon: new L.DivIcon({className: 'markerFavorito'}), pane: 'tilePane'} );
@@ -134,9 +134,20 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
   }, true);
 
   $scope.deleteFavorito = function(i) {
-    if (confirm('¿Seguro que desea borrar este favorito?'))
+    if (confirm('¿Seguro que desea borrar este favorito?')) {
       Favoritos.delete(i);
+      $scope.popover_favorito.hide();
+    }
   };
+
+  $scope.editFavorito = function(i) {
+    var fav = Favoritos.items[i];
+    var nombre = prompt('Nuevo nombre del favorito', fav.nombre);
+    if (nombre) {
+      Favoritos.edit(fav, {nombre:nombre});
+      $scope.popover_favorito.hide();
+    }
+  }
 
   $scope.clickFavorito = function(i) {
     $scope.map.panTo($scope.favoritosMarkers[i].getLatLng());
@@ -366,46 +377,29 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
     catch (e) {}
   }
 
-  // Form data for the login modal
-  $scope.loginData = {};
 
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('modal-login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
+  $scope.shareApp = function() {
+    if (window.plugins && window.plugins.socialsharing)
+      window.plugins.socialsharing.shareWithOptions({
+        message: 'App de Cualbondi',
+        subject: 'App de cualbondi',
+        url: 'https://play.google.com/store/apps/details?id=com.cualbondi.buscador',
+        chooserTitle: 'Compartir app' // Android only, you can override the default share sheet title
+      }, function(result) {
+        alert('Gracias por compartir!')
+      }, function(msg) {
+        alert('No se compartió :(')
+      });
+    else
+      alert('Error sharing')
+  }
 
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    console.log('Doing login', $scope.loginData);
-
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
-  };
-
-  $scope.popover_favorito_show = function($event, favorito) {
+  $scope.popover_favorito_show = function($event, favorito, index) {
     $scope.favoritoPopover = favorito;
+    $scope.favoritoPopoverIndex = index;
     $scope.popover_favorito.show($event);
   }
 
-
-  $ionicModal.fromTemplateUrl('modal-login.html'   , {scope: $scope}).then(function(modal) {
-    $scope.modal_login    = modal;
-  });
   $ionicModal.fromTemplateUrl('modal-favoritos.html', {scope: $scope}).then(function(modal) {
     $scope.modal_favoritos= modal;
   });
