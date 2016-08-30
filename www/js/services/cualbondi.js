@@ -2,37 +2,57 @@ angular.module('app')
 
 .factory('Recorridos', function($http) {
 
-  var API_DEFAULT_PARAMS = {
-    // API configuration
+  var API_ENDPOINT = 'https://cualbondi.com.ar/api/v2/recorridos/';
+
+  var DEFAULTS = {
     callback: 'JSON_CALLBACK',
-
-    // setteables/overrideables
-    radio_origen: 100,
-    radio_destino: 100,
     c: 'la-plata',
-    combinar: 'false',
-    p: 1,
-  };
-  if ( typeof device !== 'undefined' ) {
-    API_DEFAULT_PARAMS.uuid = device.uuid;
-    API_DEFAULT_PARAMS.source = device.platform;
+    t: 'false',
+    page: 1,
   }
-  var API_ENDPOINT = 'https://cualbondi.com.ar/api/';
+  
+  var DEFAULT_RAD = 300;
+  
+  var point2param = function(point, rad) {
+    return point.lng + ',' + point.lat + ',' + rad
+  }
 
+  var getParams = function(override) {
+    var over = angular.copy(override || {});
+    var params = {};
+
+    if ( typeof device !== 'undefined' ) {
+      params.uuid   = device.uuid;
+      params.source = device.platform;
+    }
+
+    if (over.origen && over.destino)
+      params.l = 
+          point2param(over.origen, over.radioOrigen || over.rad || DEFAULT_RAD)
+        + '|'
+        + point2param(over.destino, over.radioDestino || over.rad || DEFAULT_RAD);
+
+    if (over.page || over.p)
+      params.page = over.page || over.p;
+
+    if (over.combinar || over.t)
+      params.t = over.combinar || over.t;
+
+    return angular.extend(
+      {},
+      DEFAULTS,
+      params
+    )
+  }
 
   return {
 
-    defaultParams: angular.copy(API_DEFAULT_PARAMS),
-
     setCiudad: function(ciudad_slug) {
-      this.defaultParams.c = ciudad_slug;
+      DEFAULTS.c = ciudad_slug;
     },
 
-    setDefaultRadio: function(radioOrigen, radioDestino) {
-      if (typeof radioDestino == 'undefined')
-        radioDestino = radioOrigen;
-      this.defaultParams.radio_origen  = radioOrigen;
-      this.defaultParams.radio_destino = radioDestino;
+    setDefaultRadio: function(rad) {
+      DEFAULT_RAD  = rad;
     },
 
     search: function(params) {
@@ -44,36 +64,27 @@ angular.module('app')
         params optional
           - radio_origen: overrides this.radioOrigen
           - radio_destino: overrides this.radioDestino
+          - rad: overrides this.radioOrigen & this.radioDestino if not present
           - c
           - combinar
-          - p
+          - page
       */
 
       /*
       muestra del formato para la api
       {
-          origen: $scope.markerA._latlng.lng+','+$scope.markerA._latlng.lat,
-          destino: $scope.markerB._latlng.lng+','+$scope.markerB._latlng.lat,
-          radio_origen: $scope.radio,
-          radio_destino: $scope.radio,
-          c: $scope.ciudad.slug,
+          l: $markerA.lng+','+$markerA.lat+'|'+$markerB.lng+','+$markerB.lat,
+          rad: 300,
+          c: 'la-plata',
           combinar: 'false',
-          p: p
+          page: page
       }, 
       */
 
       return $http({
-        url: API_ENDPOINT + 'recorridos/',
+        url: API_ENDPOINT,
         method: 'jsonp',
-        params: angular.extend(
-          {},
-          this.defaultParams,
-          params,
-          {
-            origen : params.origen.lng  + ',' + params.origen.lat,
-            destino: params.destino.lng + ',' + params.destino.lat
-          }
-        )
+        params: getParams(params)
       })
     },
 

@@ -1,30 +1,60 @@
 angular.module('app').controller('AppCtrl', AppCtrl);
 
-AppCtrl.$inject = ['$scope', '$http', '$templateRequest', '$ionicModal', '$ionicPopover', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder']
+AppCtrl.$inject = ['$scope', '$http', '$templateRequest', '$ionicModal', '$ionicPopover', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder', '$ionicPlatform']
 
-function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder) {
+function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder, $ionicPlatform) {
 
-  $scope.ciudades = localstorage.get('ciudades');
-  if ( !$scope.ciudades ) {
-    $scope.ciudades = [
-      {slug:"bahia-blanca",  nombre:"Bahía Blanca" , latlng:[-38.71712603942564, -62.26758956909179]},
-      {slug:"buenos-aires",  nombre:"Buenos Aires" , latlng:[-34.61060576091466, -58.38821411132812]},
-      {slug:"cordoba",       nombre:"Córdoba"      , latlng:[-31.41672448645413, -64.18350219726561]},
-      {slug:"la-plata",      nombre:"La Plata"     , latlng:[-34.92137284339113, -57.95438289642334]},
-      {slug:"mar-del-plata", nombre:"Mar del Plata", latlng:[-38.00353496501491, -57.55290985107422]},
-      {slug:"mendoza",       nombre:"Mendoza"      , latlng:[-32.88960597084806, -68.84445190429688]},
-      {slug:"rosario",       nombre:"Rosario"      , latlng:[-32.94350062291001, -60.64985275268555]},
-      {slug:"salta",         nombre:"Salta"        , latlng:[-24.78924754938909, -65.41031241416931]},
-      {slug:"santa-fe",      nombre:"Santa Fé"     , latlng:[-31.64189163095992, -60.70441961288452]}
-    ];
-    localstorage.set("ciudades", $scope.ciudades);
-  }
+  // controllers init code
+  $ionicPlatform.ready(function(readySource) {
 
-  $scope.ciudad = localstorage.get('ciudad');
-  if ($scope.ciudad) {
-    Recorridos.setCiudad($scope.ciudad.slug);
-    Geocoder.setCiudad($scope.ciudad.slug)
-  }
+    $scope.ciudades = localstorage.get('ciudades');
+    if ( !$scope.ciudades ) {
+      $scope.ciudades = [
+        {slug:"bahia-blanca",  nombre:"Bahía Blanca" , latlng:[-38.71712603942564, -62.26758956909179]},
+        {slug:"buenos-aires",  nombre:"Buenos Aires" , latlng:[-34.61060576091466, -58.38821411132812]},
+        {slug:"cordoba",       nombre:"Córdoba"      , latlng:[-31.41672448645413, -64.18350219726561]},
+        {slug:"la-plata",      nombre:"La Plata"     , latlng:[-34.92137284339113, -57.95438289642334]},
+        {slug:"mar-del-plata", nombre:"Mar del Plata", latlng:[-38.00353496501491, -57.55290985107422]},
+        {slug:"mendoza",       nombre:"Mendoza"      , latlng:[-32.88960597084806, -68.84445190429688]},
+        {slug:"rosario",       nombre:"Rosario"      , latlng:[-32.94350062291001, -60.64985275268555]},
+        {slug:"salta",         nombre:"Salta"        , latlng:[-24.78924754938909, -65.41031241416931]},
+        {slug:"santa-fe",      nombre:"Santa Fé"     , latlng:[-31.64189163095992, -60.70441961288452]}
+      ];
+      localstorage.set("ciudades", $scope.ciudades);
+    }
+
+    $scope.ciudad = localstorage.get('ciudad');
+    if ($scope.ciudad) {
+      Recorridos.setCiudad($scope.ciudad.slug);
+      Geocoder.setCiudad($scope.ciudad.slug)
+    }
+
+
+    geolocationService.onPosition($scope, function(event, position) {
+      $scope.locationMarker.setLatLng([position.coords.latitude, position.coords.longitude]);
+      $scope.locationMarker.setRadius(position.coords.accuracy);
+      if ($scope.map) $scope.locationMarker.addTo($scope.map);
+      angular.element(document.getElementsByClassName('location-marker')).removeClass('red')
+    })
+    geolocationService.onError($scope, function(event, error) {
+      // TODO 1: show and maintain error message on screen
+      // OR alternatively remove marker
+
+      // TODO 2: If error is because no permission from device, show message
+      // with button to enable geolocation, (maybe do this inside service?)
+
+      angular.element(document.getElementsByClassName('location-marker')).addClass('red')
+
+      console.log(error.code)
+      console.log(error.message)
+    })
+
+    $ionicModal.fromTemplateUrl('modal-ciudades.html', {scope: $scope}).then(function(modal) {
+      $scope.modal_ciudades = modal;
+      if ($scope.ciudad) $scope.init()
+      else modal.show();
+    });
+  })
 
   $scope.inputA = '';
   $scope.inputB = '';
@@ -35,26 +65,6 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
   $scope.resultados = [];
 
   $scope.enableHighAccuracy = true;
-
-  geolocationService.onPosition($scope, function(event, position) {
-    $scope.locationMarker.setLatLng([position.coords.latitude, position.coords.longitude]);
-    $scope.locationMarker.setRadius(position.coords.accuracy);
-    if ($scope.map) $scope.locationMarker.addTo($scope.map);
-    angular.element(document.getElementsByClassName('location-marker')).removeClass('red')
-  })
-  geolocationService.onError($scope, function(event, error) {
-    // TODO 1: show and maintain error message on screen
-    // OR alternatively remove marker
-
-    // TODO 2: If error is because no permission from device, show message
-    // with button to enable geolocation, (maybe do this inside service?)
-
-    angular.element(document.getElementsByClassName('location-marker')).addClass('red')
-
-    console.log(error.code)
-    console.log(error.message)
-  })
-
 
 
   $scope.marcar = function(e, marker) {
@@ -205,11 +215,11 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
           }).success(function(data) {
             $scope.status = '';
             if ( more ) {
-                $scope.resultados = $scope.resultados.concat(data.resultados);
+                $scope.resultados = $scope.resultados.concat(data.results);
             }
             else
-                $scope.resultados = data.resultados;
-            $scope.cantidadResultados = data.cant;
+                $scope.resultados = data.results;
+            $scope.cantidadResultados = data.count;
             if (next) next();
           })
 
@@ -393,11 +403,6 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
   }
 
 
-  $ionicModal.fromTemplateUrl('modal-ciudades.html', {scope: $scope}).then(function(modal) {
-    $scope.modal_ciudades = modal;
-    if ($scope.ciudad) $scope.init()
-    else modal.show();
-  });
   $ionicModal.fromTemplateUrl('modal-login.html'   , {scope: $scope}).then(function(modal) {
     $scope.modal_login    = modal;
   });

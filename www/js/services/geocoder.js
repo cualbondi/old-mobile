@@ -2,34 +2,39 @@ angular.module('app')
 
 .factory('Geocoder', function($http) {
 
-  if ( typeof device !== 'undefined' ) {
-    $scope.API_EXTRA_PARAMS.uuid = device.uuid;
-    $scope.API_EXTRA_PARAMS.source = device.platform;
-    $scope.device_uuid = device.platform + device.uuid;
-  }
   var API_ENDPOINT = 'https://cualbondi.com.ar/api/v2/geocoder/';
 
+  var DEFAULTS = {
+    callback: 'JSON_CALLBACK',
+    c: 'la-plata'
+  }
+
+  var getParams = function(override) {
+    override = override || {};
+    var deviceParams = {};
+    if ( typeof device !== 'undefined' ) {
+      deviceParams.uuid = device.uuid;
+      deviceParams.source = device.platform;
+    }
+    return angular.extend(
+      {},
+      deviceParams,
+      DEFAULTS,
+      override
+    )
+  }
 
   return {
 
-    defaultParams: {
-      // API configuration
-      callback: 'JSON_CALLBACK',
-    },
-
     setCiudad: function(ciudad_slug) {
-      this.defaultParams.ciudad = ciudad_slug;
+      DEFAULTS.c = ciudad_slug;
     },
 
     search: function(q) {
       return $http({
         url: API_ENDPOINT,
         method: 'jsonp',
-        params: angular.extend(
-          {},
-          this.defaultParams,
-          { q: q }
-        )
+        params: getParams({q: q})
       })
     },
 

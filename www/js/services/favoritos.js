@@ -1,5 +1,14 @@
-angular.module('app').factory('Favoritos', ['localstorage', '$rootScope', function(localstorage, $rootScope) {
-  var _favoritos = localstorage.get('favoritos') || [];
+angular.module('app').factory('Favoritos', ['localstorage', '$rootScope', '$ionicPlatform', function(localstorage, $rootScope, $ionicPlatform) {
+
+  var _favoritos = [];
+
+  $ionicPlatform.ready(function(readySource) {
+    var favs = localstorage.get('favoritos') || [];
+    for (var i = 0; i < favs.length; i++) {
+      _favoritos.push(favs[i]);
+    }
+  })
+  
   return {
 
     // local favs
