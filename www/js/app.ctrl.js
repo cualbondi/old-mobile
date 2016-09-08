@@ -86,7 +86,8 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
   };
 
 
-  $scope.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  // $scope.tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { // for android or other platforms (ipv4 only)
+  $scope.tileLayer = L.tileLayer('https://cualbondi.com.ar/osm_proxy/{z}/{x}/{y}.png', { // for iOS (ipv6 enabled)
     attribution: '&copy; Cualbondi & OpenStreetMap contributors',
     unloadInvisibleTiles: false,
     updateWhenIdle: false
