@@ -197,7 +197,10 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
       $scope.tileLayer.addTo($scope.map);
       if ($scope.locationMarker.getLatLng()) $scope.locationMarker.addTo($scope.map);
       $scope.map.on('click', function(e) {
-        //$scope.map.contextmenu.showAt(e.latlng);
+        if ($scope.map.contextmenu.isVisible())
+          $scope.map.contextmenu.hide();
+        else
+          $scope.map.contextmenu.showAt(e.latlng);
       });
     }
     $scope.map.setView($scope.ciudad.latlng, 12);

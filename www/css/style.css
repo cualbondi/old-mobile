@@ -220,3 +220,40 @@ ion-spinner {
   height: auto !important;
   width: auto !important;
 }
+
+div.contextmenu-marker-icon {
+  margin-left: -15px !important;
+  margin-top: -27px !important;
+  width: 30px !important;
+  height: 30px !important;
+  opacity: 1 !important;
+  font-size: 20px;
+}
+
+div.contextmenu-marker-icon:before {
+  content: "\f1ff";
+  display: inline-block;
+  font-family: "Ionicons";
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  text-rendering: auto;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  text-align: center;
+  line-height:30px;
+  width:30px;
+  height:30px;
+  color: #FEFEFE;
+  text-shadow:
+   2px  0px 1px #555,
+  -2px  0px 1px #555,
+   0px  2px 1px #555,
+   0px -2px 1px #555,
+   1px  1px 1px #555,
+  -1px -1px 1px #555,
+   1px -1px 1px #555,
+  -1px  1px 1px #555;
+}
