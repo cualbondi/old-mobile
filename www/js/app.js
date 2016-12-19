@@ -1,4 +1,4 @@
-angular.module('app', ['ionic', 'ngCordova'])
+angular.module('app', ['ionic', 'ngCordova', 'ionic-pullup'])
 
 angular.module('app').run(init)
 

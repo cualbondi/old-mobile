@@ -257,3 +257,8 @@ div.contextmenu-marker-icon:before {
    1px -1px 1px #555,
   -1px  1px 1px #555;
 }
+
+ion-pull-up-handle {
+  border-radius: 5px 5px 0px 0px;
+  top: -15px !important;
+}

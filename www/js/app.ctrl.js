@@ -314,10 +314,12 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
     $scope.init();
   }
 
-  $scope.setResultadoIndice = function (indice) {
+  $scope.setResultadoIndice = function (indice, cambiarIndice) {
     var end = function() {
       $scope.loadingResultados = false;
-      $scope.resultadoIndice = indice;
+      console.log(cambiarIndice)
+      if (cambiarIndice !== false)
+        $scope.resultadoIndice = indice;
       actualizar_vista_resultados($scope.resultados, indice);
     };
     $scope.loadingResultados = true;
