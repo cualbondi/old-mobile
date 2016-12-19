@@ -71,7 +71,9 @@
             </button>
           </ion-header-bar>
           <ion-header-bar class="bar-stable bar-subheader item-input-inset">
-            <div class="buttons" style="height:33px;width:42px"></div>
+            <div class="buttons" style="height:33px;width:44px;margin-left:-2px;">
+              <button ng-click="$parent.radioVisible=!$parent.radioVisible" class="button button-icon icon ion-ios-circle-filled"></button>
+            </div>
             <label class="item-input-wrapper">
               <i class="icon ion-ios-search placeholder-icon"></i>
               <input type="search" placeholder="Destino" ng-model="$parent.inputB">
@@ -82,6 +84,14 @@
           </ion-header-bar>
 
           <ion-content>
+            <div class="radioContainer" ng-show="radioVisible">
+              <span>{{radio}}</span>
+              <div class="range">
+                <i class="icon ion-ios-circle-outline"></i>
+                <input ng-model="$parent.$parent.radio" ng-change="onChangeRadio(radio)" type="range" name="volume" min="200" max="800" step="50">
+                <i class="icon ion-record"></i>
+              </div>
+            </div>
             <div data-tap-disabled="true" id="mapa"></div>
           </ion-content>
 

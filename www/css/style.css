@@ -262,3 +262,23 @@ ion-pull-up-handle {
   border-radius: 5px 5px 0px 0px;
   top: -15px !important;
 }
+
+.radioContainer {
+  position: absolute;
+  z-index: 1000;
+  background: #f8f8f8;
+  height: 58px;
+  width: 100%;
+}
+.radioContainer > .range {
+  margin-left: 52px;
+}
+.radioContainer > span {
+  position: absolute;
+  z-index: 10;
+  display: block;
+  line-height: 58px;
+  width: 52px;
+  text-align: center;
+  vertical-align: middle;
+}

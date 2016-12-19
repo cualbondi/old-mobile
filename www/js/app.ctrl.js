@@ -59,7 +59,7 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
   $scope.inputA = '';
   $scope.inputB = '';
 
-  $scope.radio = 300;
+  $scope.radio = 400;
   Recorridos.setDefaultRadio($scope.radio);
   $scope.resultadoIndice = 0;
   $scope.resultados = [];
@@ -383,6 +383,12 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
     catch (e) {}
   }
 
+  $scope.onChangeRadio = function(rad) {
+    $scope.markerA.setRadius(rad);
+    $scope.markerB.setRadius(rad);
+    Recorridos.setDefaultRadio(rad);
+    $scope.buscarRecorridos();
+  }
 
   $scope.shareApp = function() {
     if (window.plugins && window.plugins.socialsharing)
