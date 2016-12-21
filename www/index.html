@@ -88,7 +88,7 @@
               <span>{{radio}}</span>
               <div class="range">
                 <i class="icon ion-ios-circle-outline"></i>
-                <input ng-model="$parent.$parent.radio" ng-change="onChangeRadio(radio)" type="range" name="volume" min="200" max="800" step="50">
+                <input ng-model="$parent.$parent.radio" ng-change="onChangeRadio(radio)" on-release="onReleaseChangeRadio()" type="range" name="volume" min="200" max="800" step="50">
                 <i class="icon ion-record"></i>
               </div>
             </div>

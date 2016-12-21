@@ -387,6 +387,8 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
     $scope.markerA.setRadius(rad);
     $scope.markerB.setRadius(rad);
     Recorridos.setDefaultRadio(rad);
+  }
+  $scope.onReleaseChangeRadio = function() {
     $scope.buscarRecorridos();
   }
 
