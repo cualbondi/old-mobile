@@ -1,8 +1,8 @@
 angular.module('app').controller('AppCtrl', AppCtrl);
 
-AppCtrl.$inject = ['$scope', '$http', '$templateRequest', '$ionicModal', '$ionicPopover', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder', '$ionicPlatform']
+AppCtrl.$inject = ['$scope', '$http', '$templateRequest', '$ionicModal', '$ionicPopover', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder', '$ionicPlatform', '$ionicPopup']
 
-function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder, $ionicPlatform) {
+function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder, $ionicPlatform, $ionicPopup) {
 
   // controllers init code
   $ionicPlatform.ready(function(readySource) {
@@ -111,10 +111,6 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
     var template = angular.element(html);
     $scope.locationMarker.bindPopup($compile(template)($scope)[0]);
   });
-
-  $scope.alert = function(msg) {
-    alert(msg)
-  };
 
   $scope.favoritos = Favoritos.items;
   Favoritos.onChange($scope, function(event, favoritos) {
@@ -399,13 +395,12 @@ function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $t
         subject: 'App de cualbondi',
         url: 'https://play.google.com/store/apps/details?id=com.cualbondi.buscador',
         chooserTitle: 'Compartir app' // Android only, you can override the default share sheet title
-      }, function(result) {
-        alert('Gracias por compartir!')
-      }, function(msg) {
-        alert('No se compartió :(')
       });
     else
-      alert('Error sharing')
+      $ionicPopup.alert({
+        title: 'Compartir',
+        template: 'Error tratando de compartir'
+      });
   }
 
   $scope.popover_favorito_show = function($event, favorito, index) {
