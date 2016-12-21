@@ -129,19 +129,21 @@ $ionicPlatform.ready(function(readySource) {
   }, true);
 
   $scope.deleteFavorito = function(i) {
-    if (confirm('¿Seguro que desea borrar este favorito?')) {
-      Favoritos.delete(i);
-      $scope.popover_favorito.hide();
-    }
+    $ionicPopup.confirm({
+      title: 'Borrar Favorito',
+      template: '¿Seguro que desea borrar este favorito?',
+      okText: 'Si',
+      cancelText: 'No'
+    }).then(function(res) {
+      if (res) {
+        Favoritos.delete(i);
+        $scope.popover_favorito.hide();
+      }
+    });
   };
 
   $scope.editFavorito = function(i) {
-    var fav = Favoritos.items[i];
-    var nombre = prompt('Nuevo nombre del favorito', fav.nombre);
-    if (nombre) {
-      Favoritos.edit(fav, {nombre:nombre});
-      $scope.popover_favorito.hide();
-    }
+    favoritoPrompt(null, i);
   }
 
   $scope.clickFavorito = function(i) {
@@ -149,6 +151,51 @@ $ionicPlatform.ready(function(readySource) {
     $scope.favoritosMarkers[i].openPopup();
     $scope.modal_favoritos.hide()
   };
+
+  var favoritoPrompt = function (latlng, i) {
+    var cancelled = false;
+    $scope.nombre_favorito_aux = {};
+    if (typeof i != 'undefined') {
+      var fav = Favoritos.items[i];
+      $scope.nombre_favorito_aux.data = fav.nombre;
+    }
+    $ionicPopup.show({
+      template: '<input type="text" ng-change="nombre_favorito_aux.error=\'\'" ng-model="nombre_favorito_aux.data"><span ng-show="nombre_favorito_aux.error">{{nombre_favorito_aux.error}}</span>',
+      title: latlng ? 'Favorito nuevo' : 'Editar favorito',
+      subTitle: 'Ingrese el nombre del favorito',
+      scope: $scope,
+      buttons: [
+        {
+          text: 'Cancelar',
+          onTap: function(e) {
+            cancelled = true;
+          }
+        },
+        {
+          text: '<b>Guardar</b>',
+          type: 'button-positive',
+          onTap: function(e) {
+            if (!$scope.nombre_favorito_aux.data) {
+              $scope.nombre_favorito_aux.error = 'Ingrese un nombre'
+              e.preventDefault();
+            }
+            else
+              return $scope.nombre_favorito_aux.data;
+          }
+        }
+      ]
+    }).then(function(nombre_favorito_aux) {
+      if (!cancelled) {
+        if (latlng)
+          Favoritos.add(nombre_favorito_aux, latlng);
+        else {
+          Favoritos.edit(fav, {nombre:nombre_favorito_aux});
+          $scope.popover_favorito.hide();
+        }
+      }
+    });
+
+  }
 
   $scope.init = function() {
     if (!$scope.map) {
@@ -176,8 +223,7 @@ $ionicPlatform.ready(function(readySource) {
               iconCls: 'icon ion-star',
               callback: function(e) {
                 $scope.$apply(function() {
-                  var nombre = prompt('Nombre del favorito');
-                  if (nombre) Favoritos.add(nombre, e.latlng);
+                  favoritoPrompt(e.latlng);
                 })
               }
             }
