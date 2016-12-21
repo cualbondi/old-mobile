@@ -6,9 +6,16 @@
     </div>
   </ion-header-bar>
   <ion-content>
-    <ion-list>
+    <ion-list ng-if="favoritos.length > 0">
       <ion-item ng-repeat="f in favoritos" ng-click="clickFavorito($index)">{{f.nombre}}</ion-item>
     </ion-list>
+    <div style="display:table;height:100%;width:100%" ng-if="favoritos.length == 0">
+      <div style="display:table-cell;vertical-align:middle;height:100%;text-align:center">
+        Todavía no marcaste ningún punto favorito.
+        <br>
+        Podés hacerlo tocando sobre el mapa.
+      </div>
+    </div>
   </ion-content>
   <ion-footer-bar>
     <div class="buttons">
