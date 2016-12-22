@@ -88,7 +88,7 @@
               <span>{{radio}}</span>
               <div class="range">
                 <i class="icon ion-ios-circle-outline"></i>
-                <input ng-model="$parent.$parent.radio" ng-change="onChangeRadio(radio)" on-release="onReleaseChangeRadio()" type="range" name="volume" min="200" max="800" step="50">
+                <input ng-model="$parent.$parent.radio" ng-change="onChangeRadio(radio)" on-release="onReleaseChangeRadio()" type="range" min="200" max="800" step="50">
                 <i class="icon ion-record"></i>
               </div>
             </div>
@@ -115,7 +115,7 @@
             </ion-pull-up-bar>
             <ion-pull-up-content scroll="true">
               <div>
-                <ion-list>
+                <ion-list ng-show="cantidadResultados != 0">
                   <ion-item ng-repeat="r in resultados" ng-click="setResultadoIndice($index)" ng-class="{highlight: resultadoIndice==$index}">
                     <span ng-show="resultadoIndice==$index">&nbsp;&nbsp;</span> {{r.itinerario[0].nombre}}
                   </ion-item>
@@ -124,6 +124,17 @@
                     <ion-spinner ng-show="status"></ion-spinner>
                   </ion-item>
                 </ion-list>
+                <div ng-show="cantidadResultados == 0">
+                  Probá agrandando el radio de búsqueda moviendo el círculo blanco
+                  <div class="radioContainer">
+                    <span>{{radio}}</span>
+                    <div class="range">
+                      <i class="icon ion-ios-circle-outline"></i>
+                      <input ng-model="$parent.radio" ng-change="onChangeRadio(radio)" on-release="onReleaseChangeRadio()" type="range" min="200" max="800" step="50">
+                      <i class="icon ion-record"></i>
+                    </div>
+                  </div>
+                </div>
               </div>
             </ion-pull-up-content>
           </ion-pull-up-footer>
