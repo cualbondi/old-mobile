@@ -282,3 +282,10 @@ ion-pull-up-handle {
   text-align: center;
   vertical-align: middle;
 }
+
+.item.activated {
+  background-color: white;
+}
+.item.highlight {
+  background-color: #eef;
+}

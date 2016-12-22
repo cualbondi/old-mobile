@@ -357,10 +357,9 @@ $ionicPlatform.ready(function(readySource) {
   $scope.setResultadoIndice = function (indice, cambiarIndice) {
     var end = function() {
       $scope.loadingResultados = false;
-      console.log(cambiarIndice)
       if (cambiarIndice !== false)
         $scope.resultadoIndice = indice;
-      actualizar_vista_resultados($scope.resultados, indice);
+      $timeout(function() {actualizar_vista_resultados($scope.resultados, indice)});
     };
     $scope.loadingResultados = true;
     if (indice >= $scope.resultados.length) {

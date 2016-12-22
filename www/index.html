@@ -116,8 +116,8 @@
             <ion-pull-up-content scroll="true">
               <div>
                 <ion-list>
-                  <ion-item ng-repeat="r in resultados" ng-click="setResultadoIndice($index)" ng-class="{active: resultadoIndice==$index}">
-                    <i ng-show="resultadoIndice==$index" class="ion-icon ion-chevron-right"></i> {{r.itinerario[0].nombre}}
+                  <ion-item ng-repeat="r in resultados" ng-click="setResultadoIndice($index)" ng-class="{highlight: resultadoIndice==$index}">
+                    <span ng-show="resultadoIndice==$index">&nbsp;&nbsp;</span> {{r.itinerario[0].nombre}}
                   </ion-item>
                   <ion-item>
                     <span class="button button-default" ng-show="resultados.length < cantidadResultados && !status" ng-click="setResultadoIndice(resultados.length, false)">Cargar mas</span>
