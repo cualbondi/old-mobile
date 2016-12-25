@@ -1,8 +1,8 @@
 angular.module('app').controller('AppCtrl', AppCtrl);
 
-AppCtrl.$inject = ['$scope', '$http', '$templateRequest', '$ionicModal', '$ionicPopover', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder', '$ionicPlatform', '$ionicPopup']
+AppCtrl.$inject = ['$scope', '$http', '$templateRequest', '$ionicModal', '$ionicPopover', '$timeout', '$ionicSideMenuDelegate', 'geolocationService', 'Recorridos', 'localstorage', '$compile', 'Favoritos', 'Geocoder', '$ionicPlatform', '$ionicPopup', 'ionPullUpFooterState']
 
-function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder, $ionicPlatform, $ionicPopup) {
+function AppCtrl($scope, $http, $templateRequest, $ionicModal, $ionicPopover, $timeout, $ionicSideMenuDelegate, geolocationService, Recorridos, localstorage, $compile, Favoritos, Geocoder, $ionicPlatform, $ionicPopup, ionPullUpFooterState) {
 
 $ionicPlatform.ready(function(readySource) {
 
@@ -445,6 +445,47 @@ $ionicPlatform.ready(function(readySource) {
         template: 'Error tratando de compartir'
       });
   }
+
+  var de_nuevo = false;
+  $ionicPlatform.registerBackButtonAction(
+    function() {$timeout(function(){
+      if ($scope.map._popup) {
+        $scope.map.closePopup();
+        return
+      } else
+      if ($scope.footerState != ionPullUpFooterState.COLLAPSED) {
+        $scope.footerState = ionPullUpFooterState.COLLAPSED;
+        return
+      } else
+      if ($scope.map.contextmenu.isVisible()) {
+        $scope.map.contextmenu.hide();
+        return
+      } else {
+        var unregisterExit = $ionicPlatform.registerBackButtonAction(ionic.Platform.exitApp, 1000);
+        $ionicPopup.show({
+          title: 'Salir',
+          template: '¿Seguro que querés salir? (Presiona de nuevo hacia atrás para salir)',
+          buttons: [
+            {
+              text: 'Cancelar',
+              onTap: function(e) {
+                unregisterExit();
+              }
+            },
+            {
+              text: '<b>Salir</b>',
+              type: 'button-positive',
+              onTap: function(e) {
+                ionic.Platform.exitApp()
+              }
+            }
+          ]
+        });
+      }
+    })},
+    101
+  );
+
 
   $scope.popover_favorito_show = function($event, favorito, index) {
     $scope.favoritoPopover = favorito;

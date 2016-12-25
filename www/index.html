@@ -98,7 +98,7 @@
           <ion-footer-bar class="bar-light" ng-show="busqueda">
           </ion-footer-bar>
 
-          <ion-pull-up-footer class="bar-light" state="footerState" ng-show="busqueda">
+          <ion-pull-up-footer class="bar-light" state="$parent.footerState" ng-show="busqueda">
             <ion-pull-up-handle width="100" height="100" icon-expand="ion-chevron-up" icon-collapse="ion-chevron-down"></ion-pull-up-handle>
             <ion-pull-up-bar>
               <div ng-hide="status">
