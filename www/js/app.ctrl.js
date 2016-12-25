@@ -267,17 +267,19 @@ $ionicPlatform.ready(function(readySource) {
               origen: $scope.markerA.getLatLng(),
               destino: $scope.markerB.getLatLng(),
               p: p
-          }).success(function(data) {
+          }).then(function(response) {
             $scope.status = '';
             if ( more ) {
-                $scope.resultados = $scope.resultados.concat(data.results);
+                $scope.resultados = $scope.resultados.concat(response.data.results);
             }
             else
-                $scope.resultados = data.results;
-            $scope.cantidadResultados = data.count;
+                $scope.resultados = response.data.results;
+            $scope.cantidadResultados = response.data.count;
             if (next) next();
-          })
-
+          }).catch(function(response){
+            $scope.status = 'Error buscando líneas'
+            if (next) next();
+          });
       }
   };
 
@@ -376,13 +378,13 @@ $ionicPlatform.ready(function(readySource) {
     $scope.origenesSuggestions = null;
     $scope.modal_buscarA.show();
     $scope.origenesSuggestions_error = false;
-    Geocoder.search($scope.inputA).success(function(data){
+    Geocoder.search($scope.inputA).then(function(response){
       $scope.origenesSuggestions_loading = false;
-      $scope.origenesSuggestions = data;
+      $scope.origenesSuggestions = response.data;
       if ($scope.origenesSuggestions.length == 1) {
         $scope.origenSelected = 0;
       }
-    }).error(function(){
+    }).catch(function(){
       $scope.origenesSuggestions_loading = false;
       $scope.origenesSuggestions_error = 'No se pudo buscar en este momento';
     })
@@ -402,13 +404,13 @@ $ionicPlatform.ready(function(readySource) {
     $scope.destinosSuggestions = null;
     $scope.modal_buscarB.show();
     $scope.destinosSuggestions_error = false;
-    Geocoder.search($scope.inputB).success(function(data){
+    Geocoder.search($scope.inputB).then(function(response){
       $scope.destinosSuggestions_loading = false;
-      $scope.destinosSuggestions = data;
+      $scope.destinosSuggestions = response.data;
       if ($scope.destinosSuggestions.length == 1) {
         $scope.destinoSelected = 0;
       }
-    }).error(function(){
+    }).catch(function(){
       $scope.destinosSuggestions_loading = false;
       $scope.destinosSuggestions_error = 'No se pudo buscar en este momento';
     })

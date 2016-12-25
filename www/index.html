@@ -109,8 +109,8 @@
                 </h1>
                 <button ng-show="resultadoIndice < cantidadResultados - 1" class="button button-icon icon ion-chevron-right" style="position:absolute;top:5px;right:0" ng-click="setResultadoIndice(resultadoIndice+1)"></button>
               </div>
-              <div ng-show="status">
-                <h1 class="title"><ion-spinner></ion-spinner></h1>
+              <div ng-show="status" ion-pull-up-trigger>
+                <h1 class="title"><ion-spinner ng-show="status && status.indexOf('rror') < 0"></ion-spinner> <span>{{status}}</span></h1>
               </div>
             </ion-pull-up-bar>
             <ion-pull-up-content scroll="true">
@@ -121,7 +121,7 @@
                   </ion-item>
                   <ion-item>
                     <span class="button button-default" ng-show="resultados.length < cantidadResultados && !status" ng-click="setResultadoIndice(resultados.length, false)">Cargar mas</span>
-                    <ion-spinner ng-show="status"></ion-spinner>
+                    <ion-spinner ng-show="status && status.indexOf('rror') < 0"></ion-spinner> <span ng-show="status && status.indexOf('rror') > 0">{{status}}: Compruebe la conexión a internet</span>
                   </ion-item>
                 </ion-list>
                 <div ng-show="cantidadResultados == 0">
