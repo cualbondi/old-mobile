@@ -261,6 +261,7 @@ div.contextmenu-marker-icon:before {
 ion-pull-up-handle {
   border-radius: 5px 5px 0px 0px;
   top: -15px !important;
+  height: 30px !important;
 }
 
 .radioContainer {
@@ -288,4 +289,26 @@ ion-pull-up-handle {
 }
 .item.highlight {
   background-color: #eef;
+}
+
+/* leave an empty space for ads */
+html {
+  position: absolute;
+  top: 0;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  min-height: initial;
+  background-color: white;
+}
+body {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+.modal-backdrop {
+  width: initial;
+  height: initial;
+  right: 0;
+  bottom: 50px;
 }

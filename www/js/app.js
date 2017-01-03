@@ -21,14 +21,16 @@ function init($ionicPlatform, geolocationService, $timeout) {
       console.log('PLUGIN NOT FOUND window.StatusBar')
     }
     if (window.AdMob) {
-      window.AdMob.createBanner( {
+      var options = {
         adId: 'ca-app-pub-1193419141108967/7166287944', 
         isTesting: false,
-        overlap: false, 
+        overlap: true, 
         offsetTopBar: false, 
         position: window.AdMob.AD_POSITION.BOTTOM_CENTER,
-        bgColor: 'black'
-      } );
+        bgColor: 'white'
+      }
+      window.AdMob.setOptions(options);
+      window.AdMob.createBanner(options);
     }
     else {
       console.log('PLUGIN NOT FOUND window.AdMob')
